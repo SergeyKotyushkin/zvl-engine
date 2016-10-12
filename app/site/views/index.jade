@@ -33,11 +33,3 @@ block content
         .alert.alert-danger
           .close(data-bind="click: closeErrorClick") &times;
           span(data-bind="html: errorMessage")
-    
-    div(data-bind="if: showLoadingImage")    
-      .loading-image
-        div
-          div
-            img(src='img/loading-image.gif', alt='Loading')
-            br
-            span Loading, please wait

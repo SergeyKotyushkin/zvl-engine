@@ -24,6 +24,10 @@ requirejs([
     }
 
     // knockout view model
+    function LayoutViewModel() {
+      self.showLoadingImage = ko.observable(false);
+    }
+
     function IndexViewModel() {
       var self = this;
 
@@ -33,7 +37,8 @@ requirejs([
       self.isRegistration = ko.observable(false);
       self.errorMessage = ko.observable('');
       self.hasError = ko.observable(false);
-      self.showLoadingImage = ko.observable(false);
+
+      self.layoutViewModel = ko.observable(new LayoutViewModel());
 
       self.loginOrRegistrationClick = function() {
         self.hasError(false);
@@ -46,7 +51,7 @@ requirejs([
         }
 
         if(self.isRegistration) {
-          self.showLoadingImage(true);
+          self.layoutViewModel().showLoadingImage(true);
           $.post('auth/signup', {
             email: self.email(),
             password: CryptoJS.MD5(self.password()).toString()
@@ -64,7 +69,7 @@ requirejs([
             self.hasError(true);
           })
           .always(function() {
-            self.showLoadingImage(false);
+            self.layoutViewModel().showLoadingImage(false);
           })
         }
       }

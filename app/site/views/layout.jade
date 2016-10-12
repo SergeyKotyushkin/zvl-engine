@@ -20,4 +20,11 @@ html(lang=culture)
   body(class=bodyclass)
     block content
     
+    div(data-bind="if: layoutViewModel().showLoadingImage")    
+      .loading-image
+        div
+          div
+            img(src='img/loading-image.gif', alt='Loading')
+            br
+            span Loading, please wait
     
