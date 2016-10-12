@@ -23,6 +23,57 @@ requirejs([
               viewModel.password().length > 3;
     }
 
+
+    // Post functions
+    function signupPost(viewModel) {
+
+      viewModel.layoutViewModel().showLoadingImage(true);
+      $.post('auth/signup', {
+        email: viewModel.email(),
+        password: CryptoJS.MD5(viewModel.password()).toString()
+      }, function (data) {
+        if(!data.success) {
+          viewModel.errorMessage('Sign up was failed: ' + data.message);
+          viewModel.hasError(true);
+          return;
+        }
+
+        window.location = data.location;
+      })
+      .fail(function(err) {
+        viewModel.errorMessage('Sign up was failed with. Server error');
+        viewModel.hasError(true);
+      })
+      .always(function() {
+        viewModel.layoutViewModel().showLoadingImage(false);
+      });
+    }
+
+    function signinPost(viewModel) {
+
+      viewModel.layoutViewModel().showLoadingImage(true);
+      $.post('auth/signin', {
+        email: viewModel.email(),
+        password: CryptoJS.MD5(viewModel.password()).toString()
+      }, function (data) {
+        if(!data.success) {
+          viewModel.errorMessage('Sign in was failed: ' + data.message);
+          viewModel.hasError(true);
+          return;
+        }
+
+        window.location = data.location;
+      })
+      .fail(function(err) {
+        viewModel.errorMessage('Sign in was failed. Server error');
+        viewModel.hasError(true);
+      })
+      .always(function() {
+        viewModel.layoutViewModel().showLoadingImage(false);
+      })
+    }
+
+
     // knockout view model
     function LayoutViewModel() {
       var self = this;
@@ -53,47 +104,9 @@ requirejs([
         }
 
         if(self.isRegistration()) {
-          self.layoutViewModel().showLoadingImage(true);
-          $.post('auth/signup', {
-            email: self.email(),
-            password: CryptoJS.MD5(self.password()).toString()
-          }, function (data) {
-            if(!data.success) {
-              self.errorMessage('Creation was failed: ' + data.message);
-              self.hasError(true);
-              return;
-            }
-
-            window.location = data.location;
-          })
-          .fail(function(err) {
-            self.errorMessage('Creation was failed with. Server error');
-            self.hasError(true);
-          })
-          .always(function() {
-            self.layoutViewModel().showLoadingImage(false);
-          })
+          signupPost(self);
         } else {
-          self.layoutViewModel().showLoadingImage(true);
-          $.post('auth/signin', {
-            email: self.email(),
-            password: CryptoJS.MD5(self.password()).toString()
-          }, function (data) {
-            if(!data.success) {
-              self.errorMessage('Sign up was failed: ' + data.message);
-              self.hasError(true);
-              return;
-            }
-
-            window.location = data.location;
-          })
-          .fail(function(err) {
-            self.errorMessage('Sign up was failed. Server error');
-            self.hasError(true);
-          })
-          .always(function() {
-            self.layoutViewModel().showLoadingImage(false);
-          })
+          signinPost(self);
         }
       }
 
@@ -101,7 +114,6 @@ requirejs([
         self.errorMessage('')
         self.hasError(false);
       }
-
 
     }
 
