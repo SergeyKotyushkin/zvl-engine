@@ -21,19 +21,62 @@ function init(router) {
           success = true;
       }
 
-      var culture = req.cookies.culture
-        ? req.cookies.culture
-        : constants.settings.common.defaultCulture;
-
       if(err) {
         message = err.errors[Object.keys(err.errors)[0]].message;
       }
+
+      var culture = req.cookies.culture
+        ? req.cookies.culture
+        : constants.settings.common.defaultCulture;
 
       res.json({
 				message: message,
 				success: success,
         location: success ? ['/', culture, '/center'].join('') : ''
 			});
+    });
+  });
+
+  router.post('/auth/signin', function (req, res, next) {
+    userModel.findOne({ email: req.body.email },
+      function (err, user) {
+        var success = false;
+      	var message = '';
+
+      	if (!err && user) {
+          var checkPasswordResult = user.authenticate(req.body.password);
+          if(checkPasswordResult) {
+            var publicModel = {
+              _id: user._id,
+              email: user.email,
+              isAuthenticated: true
+            };
+
+            authenticator.sign(res, publicModel);
+            success = true;
+          }
+
+          user = null;
+        }
+
+        if(!user) {
+          message = "Invalid credentials";
+        }
+
+        if(err) {
+          message = err.errors[Object.keys(err.errors)[0]].message;
+        }
+
+        var culture = req.cookies.culture
+          ? req.cookies.culture
+          : constants.settings.common.defaultCulture;
+
+        res.json({
+          message: message,
+          success: success,
+          location: success ? ['/', culture, '/center'].join('') : '',
+          err: err
+        });
     });
   });
 

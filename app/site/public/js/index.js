@@ -25,6 +25,8 @@ requirejs([
 
     // knockout view model
     function LayoutViewModel() {
+      var self = this;
+
       self.showLoadingImage = ko.observable(false);
     }
 
@@ -50,7 +52,7 @@ requirejs([
           return;
         }
 
-        if(self.isRegistration) {
+        if(self.isRegistration()) {
           self.layoutViewModel().showLoadingImage(true);
           $.post('auth/signup', {
             email: self.email(),
@@ -65,7 +67,28 @@ requirejs([
             window.location = data.location;
           })
           .fail(function(err) {
-            self.errorMessage('Creation was failed with error');
+            self.errorMessage('Creation was failed with. Server error');
+            self.hasError(true);
+          })
+          .always(function() {
+            self.layoutViewModel().showLoadingImage(false);
+          })
+        } else {
+          self.layoutViewModel().showLoadingImage(true);
+          $.post('auth/signin', {
+            email: self.email(),
+            password: CryptoJS.MD5(self.password()).toString()
+          }, function (data) {
+            if(!data.success) {
+              self.errorMessage('Sign up was failed: ' + data.message);
+              self.hasError(true);
+              return;
+            }
+
+            window.location = data.location;
+          })
+          .fail(function(err) {
+            self.errorMessage('Sign up was failed. Server error');
             self.hasError(true);
           })
           .always(function() {
