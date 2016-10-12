@@ -36,8 +36,8 @@ else {
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.use('/vendor', express.static(path.join(__dirname, 'vendor')));
 
-//var authenticator = require('./tools/authenticator');
-//app.use(authenticator.midleware);
+var authenticator = require('./tools/authenticator');
+app.use(authenticator.midleware);
 
 app.use('/', routes);
 

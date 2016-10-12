@@ -1,9 +1,10 @@
 requirejs([
+  'jquery',
   'knockout',
   'constants',
-  'jquery',
+  'cryptoJS',
   'jquery.cookie'
-], function (ko, constants, $) {
+], function ($, ko, constants) {
 
   $(document).ready(function() {
     function checkInputs(viewModel) {
@@ -11,37 +12,16 @@ requirejs([
       viewModel.password(viewModel.password().trim());
       viewModel.confirmedPassword(viewModel.confirmedPassword().trim());
 
+      var emailRegex = /\S+@\S+\.\S+/;
       return viewModel.isRegistration()
             ? viewModel.email().length > 5 &&
-              viewModel.email().indexOf("@") !== -1 &&
+              emailRegex.test(viewModel.email()) &&
               viewModel.password().length > 3 &&
               viewModel.confirmedPassword().length > 3 &&
-              viewModel.password() === $viewModel.confirmedPassword()
+              viewModel.password() === viewModel.confirmedPassword()
             : viewModel.email().length > 5 &&
               viewModel.password().length > 3;
     }
-
-    function tryToLogin(viewModel) {
-      var accountCookie = $.cookie("engine-a");
-      //if(!accountCookie) {
-      //  return;
-      //}
-
-      viewModel.showLoadingImage(true);
-      $.post("/api/tryToLogin", {password: "viewModel.userName"},
-        function (jData) {
-          var data = JSON.parse(jData)
-          //alert(data.d);
-        })
-        .fail(function (data, t, r) {
-          // on error
-        })
-        .always(function () {
-            viewModel.showLoadingImage(false);
-        });
-
-    }
-
 
     // knockout view model
     function IndexViewModel() {
@@ -56,6 +36,8 @@ requirejs([
       self.showLoadingImage = ko.observable(false);
 
       self.loginOrRegistrationClick = function() {
+        self.hasError(false);
+
         var checkInputsResult = checkInputs(self);
         if(!checkInputsResult) {
           self.errorMessage('Заполните поля и проверьте правильность введенных данных!')
@@ -63,7 +45,28 @@ requirejs([
           return;
         }
 
-        alert('ok');
+        if(self.isRegistration) {
+          self.showLoadingImage(true);
+          $.post('auth/signup', {
+            email: self.email(),
+            password: CryptoJS.MD5(self.password()).toString()
+          }, function (data) {
+            if(!data.success) {
+              self.errorMessage('Creation was failed: ' + data.message);
+              self.hasError(true);
+              return;
+            }
+
+            window.location = data.location;
+          })
+          .fail(function(err) {
+            self.errorMessage('Creation was failed with error');
+            self.hasError(true);
+          })
+          .always(function() {
+            self.showLoadingImage(false);
+          })
+        }
       }
 
       self.closeErrorClick = function() {
@@ -76,8 +79,5 @@ requirejs([
 
     var viewModel = new IndexViewModel();
     ko.applyBindings(viewModel);
-
-
-    tryToLogin(viewModel);
   });
 });

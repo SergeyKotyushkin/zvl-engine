@@ -6,6 +6,7 @@ requirejs.config({
         //storage: './tools/storage',
         //localization: './tools/localization',
         constants: './constants',
+        cryptoJS: '../vendor/js/md5',
         //underscore: '../vendor/js/underscore',
         knockout: '../vendor/js/knockout-3.4.0',
         jquery: '../vendor/js/jquery-2.2.3.min',

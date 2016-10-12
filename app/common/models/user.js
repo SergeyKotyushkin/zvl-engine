@@ -8,8 +8,10 @@ var schema = new Schema({
 	email: { type: String, default: '' },
 	username: { type: String, default: '' },
 	phone: { type: String, default: '' },
-	hashed_password: { type: String, default: '' },
-	salt: { type: String, default: '' }
+	hashedPassword: { type: String, default: '' },
+	salt: { type: String, default: '' },
+	checked: { type: Boolean, default: false },
+	isAdmin: { type: Boolean, default: false }
 });
 
 schema
@@ -17,7 +19,7 @@ schema
 	.set(function (password) {
 		this._password = password;
 		this.salt = this.makeSalt();
-		this.hashed_password = this.encryptPassword(password);
+		this.hashedPassword = this.encryptPassword(password);
 	})
 	.get(function () { return this._password; });
 
@@ -26,8 +28,9 @@ var validatePresenceOf = function (value) {
 };
 
 schema.path('email').validate(function (email) {
-	return email.length;
-}, 'Email cannot be blank');
+	var emailRegex = /\S+@\S+\.\S+/;
+	return emailRegex.test(email);
+}, 'Enter correct email (e.g. \'example@mail.com\')');
 
 schema.path('email').validate(function (email, fn) {
 	var User = mongo.model('User');
@@ -39,6 +42,10 @@ schema.path('email').validate(function (email, fn) {
 	} else fn(true);
 }, 'Email already exists');
 
+schema.path('username').validate(function (username) {
+	return username.length > 3;
+}, 'Username must containe at least 3 symbols');
+
 schema.path('username').validate(function (username, fn) {
 	var User = mongo.model('User');
 
@@ -49,26 +56,8 @@ schema.path('username').validate(function (username, fn) {
 	} else fn(true);
 }, 'User name already exists');
 
-schema.path('username').validate(function (username) {
-	return username.length;
-}, 'Username cannot be blank');
-
-schema.path('phone').validate(function (phone, fn) {
-	var User = mongo.model('User');
-
-	if (this.isNew || this.isModified('phone')) {
-		User.find({ phone: phone }).exec(function (err, users) {
-			fn(!err && users.length === 0);
-		});
-	} else fn(true);
-}, 'Phone already exists');
-
-schema.path('phone').validate(function (phone) {
-	return phone.length;
-}, 'Phone cannot be blank');
-
-schema.path('hashed_password').validate(function (hashed_password) {
-	return hashed_password.length && this._password.length;
+schema.path('hashedPassword').validate(function (hashedPassword) {
+	return hashedPassword.length && this._password.length;
 }, 'Password cannot be blank');
 
 schema.pre('save', function (next) {
@@ -83,7 +72,7 @@ schema.pre('save', function (next) {
 
 schema.methods = {
 	authenticate: function (plainText) {
-		return this.encryptPassword(plainText) === this.hashed_password;
+		return this.encryptPassword(plainText) === this.hashedPassword;
 	},
 	makeSalt: function () {
 		return Math.round((new Date().valueOf() * Math.random())) + '';

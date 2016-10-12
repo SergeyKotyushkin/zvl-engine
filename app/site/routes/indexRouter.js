@@ -1,6 +1,7 @@
 function init(router) {
 	var constants = require('../constants/index');
 	var settings = require('../tools/settings');
+	var userModel = require(__common + "/models/user");
 
 	router.get('/:culture', function (req, res, next) {
 		if (constants.labels.hasCulture(req.params.culture))
@@ -16,9 +17,13 @@ function init(router) {
 			res.redirect('/' + constants.settings.common.defaultCulture);
 	});
 
-	router.post('/api/tryToLogin', function (req, res, next) {
-		var passwordHash = req.body.password;
-		res.send(JSON.stringify({d: passwordHash}));
+	router.get('/:culture/center', function (req, res, next) {
+		if(!req.user.isAuthenticated) {
+			res.redirect('/' + req.params.culture);
+			return;
+		}
+
+		res.write("center");
 		res.end();
 	});
 }
