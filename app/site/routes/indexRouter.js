@@ -3,8 +3,10 @@ function init(router) {
 	var settings = require('../tools/settings');
 
 	router.get('/:culture', function (req, res, next) {
-		res.write("test");
-		res.end();
+		if (constants.labels.hasCulture(req.params.culture))
+			res.render('index', settings.extended(req, { user: req.user }));
+		else
+			res.redirect('/' + constants.settings.common.defaultCulture);
 	});
 
 	router.get('/', function (req, res, next) {
@@ -12,6 +14,12 @@ function init(router) {
 			res.redirect('/' + req.cookies.culture);
 		else
 			res.redirect('/' + constants.settings.common.defaultCulture);
+	});
+
+	router.post('/api/tryToLogin', function (req, res, next) {
+		var passwordHash = req.body.password;
+		res.send(JSON.stringify({d: passwordHash}));
+		res.end();
 	});
 }
 
