@@ -36,7 +36,7 @@ define([
         password: CryptoJS.MD5(viewModel.password()).toString()
       }, function (data) {
         if(!data.success) {
-          viewModel.errorMessage(renderModel.settings.labels.pages.index.messages.signupError + data.message);
+          viewModel.errorMessage(renderModel.labels.index.messages.signupError + data.message);
           viewModel.hasError(true);
           return;
         }
@@ -44,7 +44,7 @@ define([
         window.location = data.location;
       })
       .fail(function(err) {
-        viewModel.errorMessage(renderModel.settings.labels.pages.index.messages.signupServerError);
+        viewModel.errorMessage(renderModel.labels.index.messages.signupServerError);
         viewModel.hasError(true);
       })
       .always(function() {
@@ -60,7 +60,7 @@ define([
         password: CryptoJS.MD5(viewModel.password()).toString()
       }, function (data) {
         if(!data.success) {
-          viewModel.errorMessage(renderModel.settings.labels.pages.index.messages.signinError + data.message);
+          viewModel.errorMessage(renderModel.labels.index.messages.signinError + data.message);
           viewModel.hasError(true);
           return;
         }
@@ -68,7 +68,7 @@ define([
         window.location = data.location;
       })
       .fail(function(err) {
-        viewModel.errorMessage(renderModel.settings.labels.pages.index.messages.signinServerError);
+        viewModel.errorMessage(renderModel.labels.index.messages.signinServerError);
         viewModel.hasError(true);
       })
       .always(function() {
@@ -101,7 +101,7 @@ define([
 
         var checkInputsResult = checkInputs(self);
         if(!checkInputsResult.success) {
-          self.errorMessage(renderModel.settings.labels.pages.index.messages[checkInputsResult.messageKey]);
+          self.errorMessage(renderModel.labels.index.messages[checkInputsResult.messageKey]);
           self.hasError(true);
           return;
         }

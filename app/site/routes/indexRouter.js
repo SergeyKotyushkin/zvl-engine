@@ -10,10 +10,17 @@ function init(router) {
 				return;
 			}
 
+			var labels = settings.default(req).labels;
+
 			res.render('index', {
 				renderModel: {
-					user: req.user,
-					settings: settings.default(req)
+					user: {
+						username: req.user.username,
+					},
+					labels: {
+						index: labels.pages.index,
+						layout: labels.pages.layout
+					}
 				}
 			});
 		} else {
