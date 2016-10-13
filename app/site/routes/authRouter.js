@@ -90,6 +90,11 @@ function init(router) {
     });
   });
 
+  router.post('/auth/signout', function (req, res, next) {
+		authenticator.logout(res);
+    res.end();
+	});
+
 }
 
 module.exports = {

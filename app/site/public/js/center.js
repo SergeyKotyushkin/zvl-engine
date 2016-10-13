@@ -7,10 +7,26 @@ define([
 
   $(document).ready(function() {
 
+    function signout(viewModel) {
+
+      viewModel.layoutAuthViewModel().showLoadingImage(true);
+      $.post('/auth/signout', {}, function() {
+        window.location.reload();
+      })
+      .fail(function(err) {
+        viewModel.errorMessage(renderModel.labels.center.messages.signoutServerError);
+        viewModel.hasError(true);
+      })
+      .always(function() {
+        viewModel.layoutAuthViewModel().showLoadingImage(false);
+      });
+    }
+
     // knockout view model
-    function LayoutAuthViewModel() {
+    function LayoutAuthViewModel(parent) {
       var self = this;
 
+      self.parent = ko.observable(parent);
       self.toAccountLabel = ko.observable(null);
       self.showLoadingImage = ko.observable(false);
       self.showBack = ko.observable(true);
@@ -21,7 +37,7 @@ define([
       }
 
       self.backClick = function() {
-        alert(self.backLabel());
+        signout(parent);
       }
     }
 
@@ -45,7 +61,7 @@ define([
 
       self.gameAdvertismentViewModels = ko.observableArray([]);
 
-      self.layoutAuthViewModel = ko.observable(new LayoutAuthViewModel());
+      self.layoutAuthViewModel = ko.observable(new LayoutAuthViewModel(self));
     }
 
     var viewModel = new CenterViewModel();
