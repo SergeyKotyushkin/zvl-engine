@@ -1,0 +1,56 @@
+extends layoutAuth
+- bodyclass=''
+
+block headermeta
+
+block headerscripts
+  script(src="/vendor/js/require.js", data-main="/js/centerRequireJsConfig.js")
+  link(rel='stylesheet', href='/css/center.css')
+  
+  script(type='text/javascript').
+    var renderModel = !{JSON.stringify(renderModel)}
+
+block content
+  div
+    #center-carousel.carousel.slide(data-ride='carousel')
+      // Indicators
+      ol.carousel-indicators
+        - for(var i = 0; i < renderModel.carousel.slides.length; i++)
+            li(data-target='#center-carousel', data-slide-to= i, class= i===0 ? 'active': '')
+      
+      // Wrapper for slides
+      .carousel-inner(role='listbox')
+        - for(var i = 0; i < renderModel.carousel.slides.length; i++) {
+            div(class= i===0 ? 'item active': 'item')
+              img(src= renderModel.carousel.slides[i].src)
+              .carousel-caption
+                h3= renderModel.carousel.slides[i].caption
+                p= renderModel.carousel.slides[i].description
+        - }
+      
+      // Controls
+      a.left.carousel-control(href='#center-carousel', role='button', data-slide='prev')
+        span.glyphicon.glyphicon-chevron-left(aria-hidden='true')
+        span.sr-only= 'Previous'
+        
+      a.right.carousel-control(href='#center-carousel', role='button', data-slide='next')
+        span.glyphicon.glyphicon-chevron-right(aria-hidden='true')
+        span.sr-only= 'Next'
+    
+    #near-games
+      div(data-bind='foreach: gameAdvertismentViewModels')
+        .game(data-bind="attr: {'data-v': status() }")
+          div(data-bind='if: status() === 1')
+            h2(data-bind='html: name()')
+            h5(data-bind='html: date()')
+            div.btn.btn-primary(data-bind="click: toGameClick, html: 'to game'")
+      
+          div(data-bind='if: status() === 2')
+            h2(data-bind='html: name()')
+            h5(data-bind='html: date()')
+            h3= 'status 2'
+          
+          div(data-bind='if: status() === 0')
+            h3= 'status 3'
+          
+        hr

@@ -1,0 +1,37 @@
+- bodyclass=''
+doctype html
+html(lang=culture)
+  head
+    meta(charset='utf-8')
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    
+    block headermeta
+    
+    title= ''
+        
+    link(rel='stylesheet', href='/vendor/css/bootstrap.min.css')
+    link(rel='stylesheet', href='/css/common.css')
+    link(rel="icon", href="/img/favicon.ico", type="image/x-icon")
+    link(rel="shortcut icon", href="/img/favicon.ico", type="image/x-icon")
+
+    block headerscripts
+    
+  body(class=bodyclass)
+    .container-fluid
+      .row
+        .cap
+          .pull-left(data-bind="text: layoutAuthViewModel().toAccountLabel() || '', click: layoutAuthViewModel().toAccountClick")
+          .pull-right(data-bind='if: layoutAuthViewModel().showBack')
+            span.pointered(data-bind="text: layoutAuthViewModel().backLabel() || '', click: layoutAuthViewModel().backClick")
+    
+      .row.under-cap
+        block content
+    
+      div(data-bind="if: layoutAuthViewModel().showLoadingImage")    
+        .loading-image
+          div
+            div
+              img(src='/img/loading-image.gif', alt='Loading')
+              br
+              span Loading, please wait

@@ -22,17 +22,6 @@ function init(router) {
 		else
 			res.redirect(['/', constants.settings.common.defaultCulture].join(''));
 	});
-
-	router.get('/:culture/center', function (req, res, next) {
-		if(!req.user.isAuthenticated) {
-			res.redirect(['/', req.params.culture].join(''));
-			return;
-		}
-
-		res.write("center");
-		res.write(" email: " + req.user.email);
-		res.end();
-	});
 }
 
 module.exports = { init: init };
