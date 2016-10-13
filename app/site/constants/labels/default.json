@@ -28,7 +28,22 @@
 			"confirmedPasswordHint": "Повторите пароль",
 			"buttonSigninLabel": "Войти",
 			"buttonSignupLabel": "Создать",
-			"flagRegistrationLabel": "Регистрация"
+			"flagRegistrationLabel": "Регистрация",
+			"messages": {
+				"signinError": "Неудачный вход. ",
+				"signinServerError": "При попытке входа возникла серверная ошибка. Пожалуйста повторите свою попытку еще раз.",
+				"signupError": "Регистрация не прошла успешно. ",
+				"signupServerError": "При попытке регистрации возникла серверная ошибка. Пожалуйста повторите свою попытку еще раз.",
+				"invalidEmail": "Введите корректный email адрес (например, 'example@mail.com')",
+				"emailAlreadyExists": "Пользователь с таким email адресом уже существует",
+				"usernameLength": "Ник пользователя должно включать как минимум 3 символа",
+				"usernameAlreadyExists": "Пользователь с таким ником уже существует",
+				"passwordLength": "Пароль должен включать как минимум 3 символа",
+				"passwordsMismatch": "Пароли не совпадают",
+				"invalidCredentials": "Неверные учетные данные",
+				"invalidPassword": "Неверные учетные данные",
+				"unknowError": "Серверная ошибка. Повторите свою операцию ещё раз"
+			}
 		}
 	}
 }

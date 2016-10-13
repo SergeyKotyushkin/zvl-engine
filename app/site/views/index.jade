@@ -30,7 +30,7 @@ block content
       div.form-group
         label.pointered= renderModel.settings.labels.pages.index.flagRegistrationLabel
           input.pointered(type='checkbox', data-bind="checked: isRegistration")
-  .row.hidden(data-bind="if: hasError")
+  .row(data-bind="if: hasError")
     .col-xs-12
       .alert.alert-danger
         .close(data-bind="click: closeErrorClick") &times;

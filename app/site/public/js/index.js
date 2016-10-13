@@ -13,14 +13,17 @@ define([
       viewModel.confirmedPassword(viewModel.confirmedPassword().trim());
 
       var emailRegex = /\S+@\S+\.\S+/;
-      return viewModel.isRegistration()
-            ? viewModel.email().length > 5 &&
-              emailRegex.test(viewModel.email()) &&
-              viewModel.password().length > 3 &&
-              viewModel.confirmedPassword().length > 3 &&
-              viewModel.password() === viewModel.confirmedPassword()
-            : viewModel.email().length > 5 &&
-              viewModel.password().length > 3;
+
+      if(!emailRegex.test(viewModel.email()))
+        return { success: false, messageKey: 'invalidEmail'};
+
+      if(viewModel.password().length < 3)
+        return { success: false, messageKey: 'passwordLength'};
+
+      if(viewModel.isRegistration() && viewModel.password() !== viewModel.confirmedPassword())
+        return { success: false, messageKey: 'passwordsMismatch'};
+
+      return { success: true };
     }
 
 
@@ -33,7 +36,7 @@ define([
         password: CryptoJS.MD5(viewModel.password()).toString()
       }, function (data) {
         if(!data.success) {
-          viewModel.errorMessage('Sign up was failed: ' + data.message);
+          viewModel.errorMessage(renderModel.settings.labels.pages.index.messages.signupError + data.message);
           viewModel.hasError(true);
           return;
         }
@@ -41,7 +44,7 @@ define([
         window.location = data.location;
       })
       .fail(function(err) {
-        viewModel.errorMessage('Sign up was failed with. Server error');
+        viewModel.errorMessage(renderModel.settings.labels.pages.index.messages.signupServerError);
         viewModel.hasError(true);
       })
       .always(function() {
@@ -57,7 +60,7 @@ define([
         password: CryptoJS.MD5(viewModel.password()).toString()
       }, function (data) {
         if(!data.success) {
-          viewModel.errorMessage('Sign in was failed: ' + data.message);
+          viewModel.errorMessage(renderModel.settings.labels.pages.index.messages.signinError + data.message);
           viewModel.hasError(true);
           return;
         }
@@ -65,7 +68,7 @@ define([
         window.location = data.location;
       })
       .fail(function(err) {
-        viewModel.errorMessage('Sign in was failed. Server error');
+        viewModel.errorMessage(renderModel.settings.labels.pages.index.messages.signinServerError);
         viewModel.hasError(true);
       })
       .always(function() {
@@ -97,8 +100,8 @@ define([
         self.hasError(false);
 
         var checkInputsResult = checkInputs(self);
-        if(!checkInputsResult) {
-          self.errorMessage('Заполните поля и проверьте правильность введенных данных!')
+        if(!checkInputsResult.success) {
+          self.errorMessage(renderModel.settings.labels.pages.index.messages[checkInputsResult.messageKey]);
           self.hasError(true);
           return;
         }

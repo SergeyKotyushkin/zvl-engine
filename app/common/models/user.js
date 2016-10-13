@@ -1,5 +1,6 @@
 var mongodb = require('../tools/mongodb.js');
 var crypto = require('crypto');
+var settings = require(__site + '/constants');
 
 var Schema = mongodb.schema;
 var mongo = mongodb.mongo;
@@ -30,7 +31,7 @@ var validatePresenceOf = function (value) {
 schema.path('email').validate(function (email) {
 	var emailRegex = /\S+@\S+\.\S+/;
 	return emailRegex.test(email);
-}, 'Enter correct email (e.g. \'example@mail.com\')');
+}, 'invalidEmail');
 
 schema.path('email').validate(function (email, fn) {
 	var User = mongo.model('User');
@@ -40,11 +41,11 @@ schema.path('email').validate(function (email, fn) {
 			fn(!err && users.length === 0);
 		});
 	} else fn(true);
-}, 'Email already exists');
+}, 'emailAlreadyExists');
 
 schema.path('username').validate(function (username) {
 	return username.length > 3;
-}, 'Username must containe at least 3 symbols');
+}, 'usernameLength');
 
 schema.path('username').validate(function (username, fn) {
 	var User = mongo.model('User');
@@ -54,17 +55,17 @@ schema.path('username').validate(function (username, fn) {
 			fn(!err && users.length === 0);
 		});
 	} else fn(true);
-}, 'User name already exists');
+}, 'usernameAlreadyExists');
 
 schema.path('hashedPassword').validate(function (hashedPassword) {
 	return hashedPassword.length && this._password.length;
-}, 'Password cannot be blank');
+}, 'passwordLength');
 
 schema.pre('save', function (next) {
 	if (!this.isNew) return next();
 
 	if (!validatePresenceOf(this.password) && !this.skipValidation()) {
-		next(new Error('Invalid password'));
+		next(new Error('invalidPassword'));
 	} else {
 		next();
 	}

@@ -1,6 +1,15 @@
 function init(router) {
   var authenticator = require('../tools/authenticator');
   var userModel = require(__common + '/models/user');
+	var settings = require('../tools/settings');
+
+  function parseAuthError(req, err, page) {
+    if(!err || !err.errors || !err.errors.length)
+      return 'unknowError';
+
+    var messageKey = err.errors[Object.keys(err.errors)[0]].message;
+    return settings.default(req).labels.pages[page].messages[messageKey];
+  }
 
   router.post('/auth/signup', function (req, res, next) {
     userModel.create({
@@ -23,7 +32,7 @@ function init(router) {
       }
 
       if(err) {
-        message = err.errors[Object.keys(err.errors)[0]].message;
+        message = parseAuthError(req, err, 'index');
       }
 
       var culture = req.cookies.culture
@@ -61,11 +70,11 @@ function init(router) {
         }
 
         if(!user) {
-          message = "Invalid credentials";
+          message = settings.default(req).labels.pages.index.messages.invalidCredentials;
         }
 
         if(err) {
-          message = err.errors[Object.keys(err.errors)[0]].message;
+          message = parseAuthError(req, err, 'index');
         }
 
         var culture = req.cookies.culture
