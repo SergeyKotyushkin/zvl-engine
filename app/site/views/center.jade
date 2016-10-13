@@ -43,7 +43,7 @@ block content
           div(data-bind='if: status() === 1')
             h2(data-bind='html: name()')
             h5(data-bind='html: date()')
-            div.btn.btn-primary(data-bind="click: toGameClick, html: 'to game'")
+            div.btn.btn-primary(data-bind="click: toGameClick, html: renderModel.labels.center.buttonToGameLabel")
       
           div(data-bind='if: status() === 2')
             h2(data-bind='html: name()')
