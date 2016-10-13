@@ -11,9 +11,7 @@ define([
     function LayoutAuthViewModel() {
       var self = this;
 
-      self.title = ko.observable(null);
       self.toAccountLabel = ko.observable(null);
-      self.backLabel = ko.observable(null);
       self.showLoadingImage = ko.observable(false);
       self.showBack = ko.observable(true);
       self.showToAccount = ko.observable(true);
@@ -25,10 +23,6 @@ define([
       self.backClick = function() {
         alert(self.backLabel());
       }
-
-      self.title.subscribe(function(newTitle) {
-        document.title = newTitle;
-      });
     }
 
     function GameAdvertismentViewModel() {
@@ -52,15 +46,12 @@ define([
       self.gameAdvertismentViewModels = ko.observableArray([]);
 
       self.layoutAuthViewModel = ko.observable(new LayoutAuthViewModel());
-
     }
 
     var viewModel = new CenterViewModel();
     ko.applyBindings(viewModel);
 
-    viewModel.layoutAuthViewModel().title(renderModel.layoutAuthRenderModel.title);
     viewModel.layoutAuthViewModel().toAccountLabel(renderModel.layoutAuthRenderModel.user.username);
-    viewModel.layoutAuthViewModel().backLabel('Back');
     viewModel.layoutAuthViewModel().showBack(true);
     viewModel.layoutAuthViewModel().showToAccount(true);
 

@@ -16,6 +16,13 @@
 			"loadingImageLabel": "Подождите, идёт загрузка...",
 			"loadingImageAlt": "Загрузка..."
 		},
+		"layoutAuth": {
+			"loadingImageLabel": "Подождите, идёт загрузка...",
+			"loadingImageAlt": "Загрузка...",
+			"buttonBackPopup": "Выйти из профиля",
+			"toAccountPopup": "Перейти на страницу профиля",
+			"buttonBackLabel": "Выйти"
+		},
 		"index": {
 			"title": "Zona Поиска",
 			"siteLogoAlt": "Логотип",
@@ -44,6 +51,9 @@
 				"invalidPassword": "Неверные учетные данные",
 				"unknowError": "Серверная ошибка. Повторите свою операцию ещё раз"
 			}
+		},
+		"center": {
+			"title": "Новости"
 		}
 	}
 }

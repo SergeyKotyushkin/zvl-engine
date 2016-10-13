@@ -25,8 +25,9 @@ function init(router) {
 				{id: 3, name: 'tgame', date: '12.09.2017', status: 2}
 			];
 
-			res.render('center', settings.extended(req, {
+			res.render('center', {
 				renderModel: {
+					settings: settings.default(req),
 					layoutAuthRenderModel: {
 						user: {
 							username: user.username,
@@ -43,7 +44,7 @@ function init(router) {
 					},
 					nearGames: nearGames
 				}
-			}));
+			});
 		});
 	});
 }
