@@ -1,6 +1,5 @@
 requirejs.config({
     baseUrl: '/js',
-    deps: ['./index'],
     waitSeconds: 0,
     paths: {
         //storage: './tools/storage',
@@ -32,3 +31,5 @@ requirejs.config({
     bundles: {
     }
 });
+
+require(['./index']);

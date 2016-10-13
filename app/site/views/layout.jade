@@ -18,13 +18,14 @@ html(lang=culture)
     block headerscripts
     
   body(class=bodyclass)
-    block content
-    
-    div(data-bind="if: layoutViewModel().showLoadingImage")    
-      .loading-image
-        div
+    .container-fluid
+      block content
+      
+      div(data-bind="if: layoutViewModel().showLoadingImage")    
+        .loading-image
           div
-            img(src='img/loading-image.gif', alt='Loading')
-            br
-            span Loading, please wait
+            div
+              img(src='img/loading-image.gif', alt='Loading')
+              br
+              span Loading, please wait
     

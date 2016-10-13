@@ -8,28 +8,27 @@ block headerscripts
   link(rel='stylesheet', href='/css/index.css')
 
 block content
-  .container
-    .row
-      img#img-logo(src='img/site-logo.jpg')
-    .row
-      .col-xs-12.col-sm-6.col-lg-4.col-xs-offset-0.col-sm-offset-3.col-lg-offset-4.text-center
-        h3 Войдите на сайт
-        div.form-group
-          span.h5 Почта
-          input.form-control(type='email', placeholder='Введите email', data-bind="textInput: email")
-        div.form-group
-          span.h5 Пароль
-          input.form-control(type='password', placeholder='Введите пароль', data-bind="textInput: password")
-        div.form-group(data-bind="if: isRegistration")
-          span.h5 Повторите пароль
-          input.form-control(type='password', placeholder='Повторите пароль', data-bind="textInput: confirmedPassword")
-        div.form-group
-          input.btn.btn-primary(type='submit', data-bind="click: loginOrRegistrationClick, value: isRegistration()? 'Создать': 'Войти'")
-        div.form-group
-          label.pointered Регистрация
-            input.pointered(type='checkbox', data-bind="checked: isRegistration")
-    .row(data-bind="if: hasError")
-      .col-xs-12
-        .alert.alert-danger
-          .close(data-bind="click: closeErrorClick") &times;
-          span(data-bind="html: errorMessage")
+  .row
+    img#img-logo(src='img/site-logo.jpg')
+  .row
+    .col-xs-12.col-sm-6.col-lg-4.col-xs-offset-0.col-sm-offset-3.col-lg-offset-4.text-center
+      h3 Войдите на сайт
+      div.form-group
+        span.h5 Почта
+        input.form-control(type='email', placeholder='Введите email', data-bind="textInput: email")
+      div.form-group
+        span.h5 Пароль
+        input.form-control(type='password', placeholder='Введите пароль', data-bind="textInput: password")
+      div.form-group(data-bind="if: isRegistration")
+        span.h5 Повторите пароль
+        input.form-control(type='password', placeholder='Повторите пароль', data-bind="textInput: confirmedPassword")
+      div.form-group
+        input.btn.btn-primary(type='submit', data-bind="click: loginOrRegistrationClick, value: isRegistration()? 'Создать': 'Войти'")
+      div.form-group
+        label.pointered Регистрация
+          input.pointered(type='checkbox', data-bind="checked: isRegistration")
+  .row.hidden(data-bind="if: hasError")
+    .col-xs-12
+      .alert.alert-danger
+        .close(data-bind="click: closeErrorClick") &times;
+        span(data-bind="html: errorMessage")
