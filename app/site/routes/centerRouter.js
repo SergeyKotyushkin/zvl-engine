@@ -25,9 +25,14 @@ function init(router) {
 				{id: 3, name: 'tgame', date: '12.09.2017', status: 2}
 			];
 
+			var labels = settings.default(req).labels;
+
 			res.render('center', {
 				renderModel: {
-					settings: settings.default(req),
+					labels: {
+						center: labels.pages.center,
+						layoutAuth: labels.pages.layoutAuth
+					},
 					layoutAuthRenderModel: {
 						user: {
 							username: user.username,

@@ -8,7 +8,7 @@ html(lang=culture)
     
     block headermeta
     
-    title= renderModel.settings.labels.pages.center.title
+    title= renderModel.labels.center.title
         
     link(rel='stylesheet', href='/vendor/css/bootstrap.min.css')
     link(rel='stylesheet', href='/css/common.css')
@@ -21,9 +21,9 @@ html(lang=culture)
     .container-fluid
       .row
         .cap
-          .pull-left(data-bind="text: layoutAuthViewModel().toAccountLabel() || '', click: layoutAuthViewModel().toAccountClick", title= renderModel.settings.labels.pages.layoutAuth.toAccountPopup)
+          .pull-left(data-bind="text: layoutAuthViewModel().toAccountLabel() || '', click: layoutAuthViewModel().toAccountClick", title= renderModel.labels.layoutAuth.toAccountPopup)
           .pull-right(data-bind='if: layoutAuthViewModel().showBack')
-            span.pointered(data-bind="click: layoutAuthViewModel().backClick", title= renderModel.settings.labels.pages.layoutAuth.buttonBackPopup)= renderModel.settings.labels.pages.layoutAuth.buttonBackLabel
+            span.pointered(data-bind="click: layoutAuthViewModel().backClick", title= renderModel.labels.layoutAuth.buttonBackPopup)= renderModel.labels.layoutAuth.buttonBackLabel
     
       .row.under-cap
         block content
@@ -32,6 +32,6 @@ html(lang=culture)
         .loading-image
           div
             div
-              img(src='/img/loading-image.gif', alt= renderModel.settings.labels.pages.layoutAuth.loadingImageAlt)
+              img(src='/img/loading-image.gif', alt= renderModel.labels.layoutAuth.loadingImageAlt)
               br
-              span= renderModel.settings.labels.pages.layoutAuth.loadingImageLabel
+              span= renderModel.labels.layoutAuth.loadingImageLabel
