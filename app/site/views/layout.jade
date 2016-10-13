@@ -8,7 +8,7 @@ html(lang=culture)
     
     block headermeta
     
-    title= "origin"
+    title= renderModel.settings.labels.pages.index.title
         
     link(rel='stylesheet', href='/vendor/css/bootstrap.min.css')
     link(rel='stylesheet', href='/css/common.css')
@@ -25,7 +25,7 @@ html(lang=culture)
         .loading-image
           div
             div
-              img(src='img/loading-image.gif', alt='Loading')
+              img(src='img/loading-image.gif', alt= renderModel.settings.labels.pages.layout.loadingImageAlt)
               br
-              span Loading, please wait
+              span= renderModel.settings.labels.pages.layout.loadingImageLabel
     

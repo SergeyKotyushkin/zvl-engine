@@ -6,26 +6,29 @@ block headermeta
 block headerscripts
   script(src="/vendor/js/require.js", data-main="js/indexRequireJsConfig.js")
   link(rel='stylesheet', href='/css/index.css')
-
+    
+  script(type='text/javascript').
+    var renderModel = !{JSON.stringify(renderModel)}
+  
 block content
   .row
-    img#img-logo(src='img/site-logo.jpg')
+    img#img-logo(src='img/site-logo.jpg', alt= renderModel.settings.labels.pages.index.siteLogoAlt)
   .row
     .col-xs-12.col-sm-6.col-lg-4.col-xs-offset-0.col-sm-offset-3.col-lg-offset-4.text-center
-      h3 Войдите на сайт
+      h3= renderModel.settings.labels.pages.index.header
       div.form-group
-        span.h5 Почта
-        input.form-control(type='email', placeholder='Введите email', data-bind="textInput: email")
+        span.h5= renderModel.settings.labels.pages.index.emailLabel
+        input.form-control(type='email', placeholder= renderModel.settings.labels.pages.index.emailHint, data-bind="textInput: email")
       div.form-group
-        span.h5 Пароль
-        input.form-control(type='password', placeholder='Введите пароль', data-bind="textInput: password")
+        span.h5= renderModel.settings.labels.pages.index.passwordLabel
+        input.form-control(type='password', placeholder= renderModel.settings.labels.pages.index.passwordHint, data-bind="textInput: password")
       div.form-group(data-bind="if: isRegistration")
-        span.h5 Повторите пароль
-        input.form-control(type='password', placeholder='Повторите пароль', data-bind="textInput: confirmedPassword")
+        span.h5= renderModel.settings.labels.pages.index.confirmedPasswordLabel
+        input.form-control(type='password', placeholder= renderModel.settings.labels.pages.index.confirmedPasswordHint, data-bind="textInput: confirmedPassword")
       div.form-group
-        input.btn.btn-primary(type='submit', data-bind="click: loginOrRegistrationClick, value: isRegistration()? 'Создать': 'Войти'")
+        input.btn.btn-primary(type='submit', data-bind="click: loginOrRegistrationClick, value: isRegistration()? renderModel.settings.labels.pages.index.buttonSignupLabel: renderModel.settings.labels.pages.index.buttonSigninLabel")
       div.form-group
-        label.pointered Регистрация
+        label.pointered= renderModel.settings.labels.pages.index.flagRegistrationLabel
           input.pointered(type='checkbox', data-bind="checked: isRegistration")
   .row.hidden(data-bind="if: hasError")
     .col-xs-12

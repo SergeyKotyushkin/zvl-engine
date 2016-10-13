@@ -10,7 +10,12 @@ function init(router) {
 				return;
 			}
 
-			res.render('index', settings.extended(req, { user: req.user }));
+			res.render('index', {
+				renderModel: {
+					user: req.user,
+					settings: settings.default(req)
+				}
+			});
 		} else {
 			res.redirect(['/', constants.settings.common.defaultCulture].join(''));
 		}

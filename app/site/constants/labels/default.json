@@ -10,5 +10,25 @@
 				"body": "Приносим свои извинения"
 			}
 		}
+	},
+	"pages": {
+		"layout": {
+			"loadingImageLabel": "Подождите, идёт загрузка...",
+			"loadingImageAlt": "Загрузка..."
+		},
+		"index": {
+			"title": "Zona Поиска",
+			"siteLogoAlt": "Логотип",
+			"header": "Войдите на сайт",
+			"emailLabel": "Почта",
+			"emailHint": "Введите email",
+			"passwordLabel": "Пароль",
+			"passwordHint": "Введите пароль",
+			"confirmedPasswordLabel": "Повторите пароль",
+			"confirmedPasswordHint": "Повторите пароль",
+			"buttonSigninLabel": "Войти",
+			"buttonSignupLabel": "Создать",
+			"flagRegistrationLabel": "Регистрация"
+		}
 	}
 }
