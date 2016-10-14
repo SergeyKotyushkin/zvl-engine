@@ -35,7 +35,6 @@ define([
       var self = this;
 
       self.username = ko.observable(null);
-      self.email = ko.observable(null);
       self.oldPassword = ko.observable(null);
       self.newPassword = ko.observable(null);
       self.newConfirmedPassword = ko.observable(null);
