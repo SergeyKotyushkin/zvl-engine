@@ -62,7 +62,70 @@
 		"account": {
 			"title": "Профиль",
 			"buttonBackPopup": "Вернуться на страницу новостей",
-			"buttonBackLabel": "Назад"
+			"buttonBackLabel": "Назад",
+			"profile": {
+				"header": "Профиль",
+				"email": "Почта: ",
+				"username": "Ник",
+				"changeUsername": "Сменить ник",
+				"oldPassword": "Старый пароль",
+				"newPassword": "Новый пароль",
+				"newConfirmedPassword": "Повторите новый пароль",
+				"changePassword": "Сменить пароль"
+			},
+			"team": {
+				"header": "Информация о команде",
+				"yourTeam": "Команда",
+				"captainInBrackets": "(Капитан)",
+				"composition": "Состав",
+				"captainPopup": "Капитан",
+				"removeUserFromTeamPopup": "Удалить из команды",
+				"invite": {
+					"header": "Пригласить в команду",
+					"enterUsername": "Введите ник пользователя",
+					"inviteUser": "Пригласить"
+				},
+				"leaveTeam": {
+					"header": "Покинуть команду",
+					"leave": "Выйти из команды",
+					"save": "Оставить команду админу и выйти"
+				},
+				"createTeam": {
+					"header": "Создать команду",
+					"name": "Название",
+					"create": "Создать"
+				}
+			},
+			"invites": {
+				"header": "Приглашения в команды",
+				"newInvite": "Новое приглашение",
+				"newInviteMessage": "Вы получили новое приглашение от команды: ",
+				"commit": "Принять",
+				"cancel": "Отмена"
+			},
+			"emptyTeams": {
+				"header": "Оставленные вами команды",
+				"backPopup": "Вернуться в команду"
+			},
+			"games": {
+				"header": "Игры",
+				"create": "Создать игру",
+				"number": "№",
+				"name": "Название",
+				"active": "Активность",
+				"statistics": "Статистика",
+				"teams": "Команды",
+				"edit": "Изменить",
+				"remove": "Удалить"
+			},
+			"teamsModal": {
+				"header": "Выберите команды для игры",
+				"teamId": "ID",
+				"teamName": "Название",
+				"teamIsChecked": "Участие",
+				"commit": "Принять",
+				"cancel": "Отмена"
+			}
 		}
 	}
 }
