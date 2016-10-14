@@ -12,6 +12,11 @@ block headerscripts
     var renderModel = !{JSON.stringify(renderModel)}
 
 block content
+  .col-xs-12(data-bind='if: hasError')
+    .alert.alert-danger.panel-content
+      .close(data-bind="click: closeErrorClick") &times;
+      span(data-bind="html: errorMessage")
+      .clearfix
   .col-md-6
     .panel.panel-default.panel-content
       .panel-heading

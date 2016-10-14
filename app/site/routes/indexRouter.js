@@ -18,6 +18,7 @@ function init(router) {
 						username: req.user.username,
 					},
 					labels: {
+						messages: labels.messages,
 						index: labels.pages.index,
 						layout: labels.pages.layout
 					}

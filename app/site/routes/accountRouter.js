@@ -22,6 +22,7 @@ function init(router) {
 
 			res.render('account', { renderModel: {
 					labels: {
+						messages: labels.messages,
 						account: labels.pages.account,
 						layoutAuth: labels.pages.layoutAuth
 					},
@@ -37,6 +38,32 @@ function init(router) {
 			});
 		});
 	});
+
+	// ajax post requests
+	router.post('/account/changeUsername', function (req, res, next) {
+		if(!req.user.isAuthenticated) {
+			res.redirect(['/', req.params.culture].join(''));
+			return;
+		}
+
+		userModel.update(
+			{ _id: req.user._id },
+			{ username: req.body.newUsername },
+			{},
+			function(err, user) {
+				if(err || !user) {
+					res.json({
+						message: settings.parseAuthError(req, err, 'account'),
+						success: false
+					});
+					return;
+				}
+
+			console.log(user);
+			res.json({ success: true, message: req.body.newUsername });
+		});
+	});
+	
 }
 
 module.exports = { init: init };

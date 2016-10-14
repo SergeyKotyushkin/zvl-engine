@@ -3,13 +3,6 @@ function init(router) {
   var userModel = require(__common + '/models/user');
 	var settings = require('../tools/settings');
 
-  function parseAuthError(req, err, page) {
-    if(!err || !err.errors || !err.errors.length)
-      return 'unknowError';
-
-    var messageKey = err.errors[Object.keys(err.errors)[0]].message;
-    return settings.default(req).labels.pages[page].messages[messageKey];
-  }
 
   router.post('/auth/signup', function (req, res, next) {
     userModel.create({
@@ -32,7 +25,7 @@ function init(router) {
       }
 
       if(err) {
-        message = parseAuthError(req, err, 'index');
+        message = settings.parseAuthError(req, err, 'index');
       }
 
       var culture = req.cookies.culture
@@ -74,7 +67,7 @@ function init(router) {
         }
 
         if(err) {
-          message = parseAuthError(req, err, 'index');
+          message = settings.parseAuthError(req, err, 'index');
         }
 
         var culture = req.cookies.culture

@@ -30,6 +30,7 @@ function init(router) {
 			res.render('center', {
 				renderModel: {
 					labels: {
+						messages: labels.messages,
 						center: labels.pages.center,
 						layoutAuth: labels.pages.layoutAuth
 					},

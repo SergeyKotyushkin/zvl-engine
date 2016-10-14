@@ -6,6 +6,29 @@ define([
 
   $(document).ready(function() {
 
+    // post functions
+    function changeUsername(viewModel) {
+      viewModel.layoutAuthViewModel().showLoadingImage(true);
+      $.post('/account/changeUsername', { newUsername: viewModel.profilePanelViewModel().username }, function(data) {
+        if(!data.success) {
+          viewModel.errorMessage(data.message);
+          viewModel.hasError(true);
+          return;
+        }
+
+        viewModel.username(data.message);
+        viewModel.profilePanelViewModel().username(data.message);
+      })
+      .fail(function(err) {
+        viewModel.errorMessage(renderModel.labels.messages.serverError);
+        viewModel.hasError(true);
+      })
+      .always(function() {
+        viewModel.layoutAuthViewModel().showLoadingImage(false);
+      });
+    }
+
+
     // knockout view models
     function LayoutAuthViewModel(parent) {
       var self = this;
@@ -31,16 +54,30 @@ define([
     }
 
 
-    function ProfilePanelViewModel() {
+    function ProfilePanelViewModel(parent) {
       var self = this;
 
+      self.parent = ko.observable(parent);
       self.username = ko.observable(null);
       self.oldPassword = ko.observable(null);
       self.newPassword = ko.observable(null);
       self.newConfirmedPassword = ko.observable(null);
 
-      self.updateProfileDataClick = function() {
-        alert('update profile data');
+      self.updateUsernameClick = function() {
+        self.username(self.username().trim());
+        if(self.username().length < 3) {
+          self.parent().errorMessage(renderModel.labels.account.messages.usernameLength);
+          self.parent().hasError(true);
+          return;
+        }
+
+        if(self.username() === self.parent().username()) {
+          self.parent().errorMessage(renderModel.labels.account.messages.usernameSimilar);
+          self.parent().hasError(true);
+          return;
+        }
+
+        changeUsername(self.parent());
       }
 
       self.updatePasswordClick = function() {
@@ -186,9 +223,11 @@ define([
       self.username = ko.observable(null);
       self.email = ko.observable(null);
       self.isAdmin = ko.observable(0);
+      self.errorMessage = ko.observable('');
+      self.hasError = ko.observable(false);
 
       self.layoutAuthViewModel = ko.observable(new LayoutAuthViewModel(self));
-      self.profilePanelViewModel = ko.observable(new ProfilePanelViewModel());
+      self.profilePanelViewModel = ko.observable(new ProfilePanelViewModel(self));
       self.teamPanelViewModel = ko.observable(new TeamPanelViewModel());
       self.invitePanelViewModel = ko.observable(new InvitePanelViewModel());
       self.emptyTeamsPanelViewModel = ko.observable(new EmptyTeamsPanelViewModel());
@@ -198,6 +237,11 @@ define([
 
       self.commitGameTeamsClick = function() {
         alert('commit game teams');
+      }
+
+      self.closeErrorClick = function() {
+        self.errorMessage('')
+        self.hasError(false);
       }
     }
 
@@ -213,5 +257,6 @@ define([
     viewModel.username(renderModel.layoutAuthRenderModel.user.username);
     viewModel.email(renderModel.layoutAuthRenderModel.user.email);
     viewModel.isAdmin(renderModel.layoutAuthRenderModel.user.isAdmin);
+    viewModel.profilePanelViewModel().username(viewModel.username());
   });
 });
