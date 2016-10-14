@@ -185,7 +185,7 @@ define([
       self.userId = ko.observable(null);
       self.username = ko.observable(null);
       self.email = ko.observable(null);
-      self.isAdmin = ko.observable(false);
+      self.isAdmin = ko.observable(0);
 
       self.layoutAuthViewModel = ko.observable(new LayoutAuthViewModel(self));
       self.profilePanelViewModel = ko.observable(new ProfilePanelViewModel());
@@ -212,5 +212,6 @@ define([
     viewModel.userId(renderModel.layoutAuthRenderModel.user.id);
     viewModel.username(renderModel.layoutAuthRenderModel.user.username);
     viewModel.email(renderModel.layoutAuthRenderModel.user.email);
+    viewModel.isAdmin(renderModel.layoutAuthRenderModel.user.isAdmin);
   });
 });

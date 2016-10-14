@@ -12,7 +12,7 @@ var schema = new Schema({
 	hashedPassword: { type: String, default: '' },
 	salt: { type: String, default: '' },
 	checked: { type: Boolean, default: false },
-	isAdmin: { type: Boolean, default: false }
+	isAdmin: { type: Number, default: false }
 });
 
 schema

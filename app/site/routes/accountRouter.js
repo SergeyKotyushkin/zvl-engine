@@ -29,7 +29,8 @@ function init(router) {
 						user: {
 							username: user.username,
 							email: user.email,
-							id: user.id
+							id: user.id,
+							isAdmin: user.isAdmin
 						}
 					}
 				}
