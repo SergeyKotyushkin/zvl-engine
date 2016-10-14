@@ -19,9 +19,7 @@
 		"layoutAuth": {
 			"loadingImageLabel": "Подождите, идёт загрузка...",
 			"loadingImageAlt": "Загрузка...",
-			"buttonBackPopup": "Выйти из профиля",
-			"toAccountPopup": "Перейти на страницу профиля",
-			"buttonBackLabel": "Выйти"
+			"toAccountPopup": "Перейти на страницу профиля"
 		},
 		"index": {
 			"title": "Zona Поиска",
@@ -55,9 +53,16 @@
 		"center": {
 			"title": "Новости",
 			"buttonToGameLabel": "Войти в игру",
+			"buttonBackPopup": "Выйти из профиля",
+			"buttonBackLabel": "Выйти",
 			"messages": {
 				"signoutServerError": "При попытке выхода возникла серверная ошибка. Пожалуйста повторите свою попытку еще раз."
 			}
+		},
+		"account": {
+			"title": "Профиль",
+			"buttonBackPopup": "Вернуться на страницу новостей",
+			"buttonBackLabel": "Назад"
 		}
 	}
 }

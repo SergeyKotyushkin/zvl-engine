@@ -8,7 +8,7 @@ html(lang=culture)
     
     block headermeta
     
-    title= renderModel.labels.center.title
+    title= ''
         
     link(rel='stylesheet', href='/vendor/css/bootstrap.min.css')
     link(rel='stylesheet', href='/css/common.css')
@@ -21,9 +21,10 @@ html(lang=culture)
     .container-fluid
       .row
         .cap
-          .pull-left(data-bind="text: layoutAuthViewModel().toAccountLabel() || '', click: layoutAuthViewModel().toAccountClick", title= renderModel.labels.layoutAuth.toAccountPopup)
+          .pull-left(data-bind='if: layoutAuthViewModel().showToAccount')
+            span.pointered(data-bind="text: layoutAuthViewModel().toAccountLabel() || '', click: layoutAuthViewModel().toAccountClick", title= renderModel.labels.layoutAuth.toAccountPopup)
           .pull-right(data-bind='if: layoutAuthViewModel().showBack')
-            span.pointered(data-bind="click: layoutAuthViewModel().backClick", title= renderModel.labels.layoutAuth.buttonBackPopup)= renderModel.labels.layoutAuth.buttonBackLabel
+            span.pointered(data-bind="click: layoutAuthViewModel().backClick, attr: {title: layoutAuthViewModel().buttonBackPopup}, html: layoutAuthViewModel().buttonBackLabel")
     
       .row.under-cap
         block content

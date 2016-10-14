@@ -27,18 +27,25 @@ define([
       var self = this;
 
       self.parent = ko.observable(parent);
+      self.title = ko.observable(null);
+      self.buttonBackLabel = ko.observable(null);
+      self.buttonBackPopup = ko.observable(null);
       self.toAccountLabel = ko.observable(null);
       self.showLoadingImage = ko.observable(false);
       self.showBack = ko.observable(true);
       self.showToAccount = ko.observable(true);
 
       self.toAccountClick = function() {
-        alert('to account');
+        window.location = "account";
       }
 
       self.backClick = function() {
         signout(parent);
       }
+
+      self.title.subscribe(function(newTitle) {
+        document.title = newTitle;
+      });
     }
 
     function GameAdvertismentViewModel() {
@@ -67,7 +74,10 @@ define([
     var viewModel = new CenterViewModel();
     ko.applyBindings(viewModel);
 
+    viewModel.layoutAuthViewModel().title(renderModel.labels.center.title);
     viewModel.layoutAuthViewModel().toAccountLabel(renderModel.layoutAuthRenderModel.user.username);
+    viewModel.layoutAuthViewModel().buttonBackLabel(renderModel.labels.center.buttonBackLabel);
+    viewModel.layoutAuthViewModel().buttonBackPopup(renderModel.labels.center.buttonBackPopup);
     viewModel.layoutAuthViewModel().showBack(true);
     viewModel.layoutAuthViewModel().showToAccount(true);
 

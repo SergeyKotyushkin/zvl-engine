@@ -81,7 +81,12 @@ define([
     function LayoutViewModel() {
       var self = this;
 
+      self.title = ko.observable(null);
       self.showLoadingImage = ko.observable(false);
+
+      self.title.subscribe(function(newTitle) {
+        document.title = newTitle;
+      });
     }
 
     function IndexViewModel() {
@@ -122,5 +127,7 @@ define([
 
     var viewModel = new IndexViewModel();
     ko.applyBindings(viewModel);
+
+    viewModel.layoutViewModel().title(renderModel.labels.index.title);
   });
 });

@@ -1,0 +1,60 @@
+.panel-content {
+    margin: 10px 5px;
+}
+
+.captain-star {
+    color: goldenrod;
+    cursor: default;
+}
+
+.member-star {
+    color: grey;
+    cursor: pointer;
+}
+
+.member-star :hover {
+    color: rgb(233, 113, 113);
+}
+
+.remove-user {
+    color: grey;
+    cursor: pointer;
+}
+
+.remove-user :hover {
+    color: rgb(233, 113, 113);
+}
+
+.games-team {
+    margin: 2px;
+    padding: 2px;
+    background-color: rgb(254, 162, 162);
+    color: rgb(248, 240, 240);
+    -ms-text-shadow: 1px 1px 2px black;
+    text-shadow: 1px 1px 2px black;
+    border: 1px solid rgb(189, 10, 10);
+    -ms-border-radius: 2px;
+    border-radius: 2px;
+}
+
+td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.empty-teams {
+    margin: 10px 0;
+}
+
+.empty-teams > strong {
+    margin-right: 10px;
+}
+
+.games-header {
+    margin: 10px;
+}
+
+#leave-team-panel-body div + div,
+#invites-panel-body div + div {
+  margin-left: 10px;
+}

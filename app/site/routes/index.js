@@ -4,5 +4,6 @@ var router = express.Router();
 require('./indexRouter').init(router);
 require('./authRouter').init(router);
 require('./centerRouter').init(router);
+require('./accountRouter').init(router);
 
 module.exports = router;

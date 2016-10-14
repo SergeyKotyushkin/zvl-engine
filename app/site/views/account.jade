@@ -1,0 +1,194 @@
+extends layoutAuth
+- bodyclass=''
+
+block headermeta
+
+block headerscripts
+  script(src="/vendor/js/require.js", data-main="/js/accountRequireJsConfig.js")
+  link(rel='stylesheet', href='/vendor/css/font-awesome.min.css')
+  link(rel='stylesheet', href='/css/account.css')
+  
+  script(type='text/javascript').
+    var renderModel = !{JSON.stringify(renderModel)}
+
+block content
+  .col-md-6
+    .panel.panel-default.panel-content
+      .panel-heading
+        span= 'Profile Panel'
+      .panel-body
+        .form-group
+          strong= 'Почта:'
+          span(data-bind='text: profilePanelViewModel().email')
+        
+        hr
+        
+        strong= 'Ник'
+        .form-group
+          input.form-control(data-bind='textInput: profilePanelViewModel().username')
+        .pull-right.btn.btn-primary(data-bind='click: profilePanelViewModel().updateUsernameClick')= 'Сменить ник'
+        
+        hr
+        
+        .form-group
+          div
+            strong= 'Old password'
+            input.form-control(type='password', data-bind='textInput: profilePanelViewModel().oldPassword')
+        .form-group
+          div
+            strong= 'New password'
+            input.form-control(type='password', data-bind='textInput: profilePanelViewModel().newPassword')
+        .form-group
+          div
+            strong= 'Confirm new password'
+            input.form-control(type='password', data-bind='textInput: profilePanelViewModel().newConfirmedPassword')
+        .pull-right.btn.btn-primary(data-bind='click: profilePanelViewModel().updatePasswordClick')= 'Change password'
+        
+  .col-md-6
+    .panel.panel-default.panel-content
+      .panel-heading
+        span= 'Team Panel'
+      .panel-body
+        div(data-bind='if: !teamPanelViewModel().isEmpty()')
+          div
+            div
+              strong= 'Team'
+              span(data-bind='text: teamPanelViewModel().name()')
+              span(data-bind='if: teamPanelViewModel().isCapitan()')= '(Captain)'
+            div(data-bind='if: teamPanelViewModel().users().length')
+              strong= 'Состав'
+              ul(data-bind='foreach: teamPanelViewModel().users')
+                li
+                  strong(data-bind='text: username')
+                  span(data-bind='if: $parent.capitanId() === userId()')
+                    i.fa.fa-lg.fa-star.captain-star(title='Capitan')
+                  span(data-bind='if: $parent.capitanId() !== userId()')
+                    i.fa.fa-lg.fa-star.member-star(data-bind='click: setCaptainClick')
+                  span(data-bind='if: $parent.isCaptain() && $root.userId() !== userId()')
+                    i.fa.fa-times.remove-user(title='remove from team', data-bind='click: $removeFromTeamClick')
+
+        div(data-bind='if: !teamPanelViewModel().isEmpty() && teamPanelViewModel().isCaptain()')
+          .panel.panel-default.panel-content.clearfix
+            .panel-heading
+              span= 'Invite User Panel'
+            .panel-body
+              strong= 'Enter username'
+              .form-group
+                input.form-control(data-bind='textInput: teamPanelViewModel().usernameForAdd')
+              .pull-right
+                .btn.btn-primary(data-bind='click: teamPanelViewModel().inviteUserClick')= 'Invite to team'
+
+        div(data-bind='if: !teamPanelViewModel().isEmpty() && (!teamPanelViewModel().isCaptain() || (teamPanelViewModel().isCaptain() && teamPanelViewModel().users().length === 1))')
+          .panel.panel-default.panel-content
+            .panel-heading
+              span= 'Leave Team Panel'
+            #leave-team-panel-body.panel-body
+              .pull-left.text-center(data-bind='if: teamPanelViewModel().users().length > 1')
+                .btn.btn-default(data-bind='click: teamPanelViewModel().leaveTeamClick')= 'Leave team'
+              .pull-left.text-center(data-bind='if: teamPanelViewModel().users().length === 1')
+                .btn.btn-default(data-bind='click: teamPanelViewModel().leaveTeamClick')= 'Save team and escape it'
+
+        div(data-bind='if: teamPanelViewModel().isEmpty()')
+          .panel.panel-default.panel-content
+            .panel-heading
+              span= 'Create Team Panel'
+            .panel-body
+              strong= 'team'
+              .form-group
+                input.form-control(data-bind='textInput: teamPanelViewModel().newTeamName')
+              .pull-right.btn.btn-primary(data-bind='click: teamPanelViewModel().createTeamClick')= 'Create team'
+    
+  .col-md-6(data-bind='if: invitePanelViewModel().invites().length')
+    .panel.panel-default.panel-content
+      .panel-heading
+        span= 'Invites Panel'
+      .panel-body
+        strong= 'Invites'            
+        div(data-bind='foreach: invitePanelViewModel().invites')
+          .panel.panel-default.panel-content
+            .panel-heading
+              span= 'New invite'
+            #invites-panel-body.panel-body
+              span= 'You have recieved new invite'
+              strong(data-bind='text: fromTeamName')
+              div
+                .pull-right
+                  .btn.btn-primary(data-bind='click: commitClick')= 'Commit'
+                  .btn.btn-default(data-bind='click: cancelClick')= 'Cancel'
+
+  .col-md-6(data-bind='if: teamPanelViewModel().isEmpty() && emptyTeamsPanelViewModel().emptyTeams().length')
+    .panel.panel-default.panel-content
+      .panel-heading
+        span= 'Empty teams'
+      .panel-body
+        div(data-bind='foreach: emptyTeamsPanelViewModel().emptyTeams')
+          .empty-teams
+            strong(data-bind='text: name')
+            .btn.btn-default(title='enter team', data-bind='click: enterTeamClick')
+              i.fa.fa-undo
+  
+  .col-xs-12(data-bind='if: isAdmin() === 1')
+    .panel.panel-default.panel-content
+      .panel-heading
+        span= 'Games'
+      .panel-body
+        div(data-bind="class: gamesPanelViewModel().games().length ? 'form-group': ''")
+          .btn.btn-primary(data-bind='click: gamesPanelViewModel().createGameClick')= 'Create a game'
+        div(data-bind='if: gamesPanelViewModel().games().length')
+          table.table.table-bordered.table-striped
+            tr
+              th= '#'
+              th= 'Name'
+              th= 'Active'
+              th= 'Stats'
+              th= 'Teams'
+              th= 'Change'
+              th= 'Remove'
+            tbody(data-bind='foreach: gamesPanelViewModel().games')
+              tr
+                td
+                  strong(data-bind='text: $index()+1')
+                td
+                  strong(data-bind='text: name')
+                td
+                  input(type='checkbox', disabled='disabled' data-bind='checked: enableActive')
+                td
+                  input(type='checkbox', disabled='disabled' data-bind='checked: enableStatistics')
+                td
+                  div(data-bind='foreach: teams')
+                    .game-team(data-bind='text: name')
+                  .btn.btn-default(data-toggle='modal', data-target='#teams-modal', data-bind='click: editGameTeamsClick')
+                    i.fa.fa-lg.fa-exchange
+                td
+                  .btn.btn-default(data-bind='click: editGameClick')
+                    i.fa.fa-lg.fa-edit
+                td
+                  .btn.btn-default(data-bind='click: removeGameClick')
+                    i.fa.fa-lg.fa-trash
+  
+  // modals
+  #teams-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='team-modal-label')
+    .modal-dialog(role='document')
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal', aria-label='Close')
+            span(aria-hidden='true')
+              | &times;
+          h4#team-modal-label.modal-title= 'Choose teams'
+        .modal-body
+          table.table.table-bordered.table-striped.table-responsive
+            tr
+              th= 'ID'
+              th= 'Name'
+              th= 'in game'
+            tbody(data-bind='foreach: allTeams')
+              tr
+                td(data-bind='text: id')
+                td(data-bind='text: name')
+                td
+                  input(type='checkbox', data-bind='checked: isChecked')
+        .modal-footer
+          button.btn.btn-default(type='button', data-dismiss='modal')= 'Cancel'
+          button.btn.btn-primary(type='button', data-bind='click: commitGameTeamsClick')= 'Ok'
+                      
+                

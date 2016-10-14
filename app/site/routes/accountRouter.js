@@ -4,7 +4,7 @@ function init(router) {
 	var settings = require('../tools/settings');
 	var userModel = require(__common + "/models/user");
 
-	router.get('/:culture/center', function (req, res, next) {
+	router.get('/:culture/account', function (req, res, next) {
 		if(!req.user.isAuthenticated) {
 			res.redirect(['/', req.params.culture].join(''));
 			return;
@@ -18,36 +18,20 @@ function init(router) {
 				return;
 			}
 
-			// load near game
-			var nearGames = [
-				{id: 1, name: 'fgame', date: '10.09.2016', status: 0},
-				{id: 2, name: 'sgame', date: '11.09.2015', status: 1},
-				{id: 3, name: 'tgame', date: '12.09.2017', status: 2}
-			];
-
 			var labels = settings.default(req).labels;
 
-			res.render('center', {
-				renderModel: {
+			res.render('account', { renderModel: {
 					labels: {
-						center: labels.pages.center,
+						account: labels.pages.account,
 						layoutAuth: labels.pages.layoutAuth
 					},
 					layoutAuthRenderModel: {
 						user: {
 							username: user.username,
-							email: user.email
+							email: user.email,
+							id: user.id
 						}
-					},
-					carousel: {
-						slides: [
-							{src: '/img/center-carousel/nature.jpg', caption: 'Nature', description: 'first'}//,
-							//{src: 'https://placeimg.com/1000/300/tech', caption: 'Fashion', description: 'second'},
-							//{src: 'https://placeimg.com/1000/300/sepia', caption: 'Sport', description: 'third'}
-						]
-					},
-					nearGames: nearGames,
-					culture: req.params.culture
+					}
 				}
 			});
 		});
