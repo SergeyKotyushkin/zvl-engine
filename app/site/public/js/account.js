@@ -26,8 +26,9 @@ define([
           return;
         }
 
-        viewModel.username(data.message);
-        viewModel.profilePanelViewModel().username(data.message);
+        viewModel.username(data.newUsername);
+        viewModel.profilePanelViewModel().username(data.newUsername);
+        setMessage(viewModel, data.message, true);
       })
       .fail(function(err) {
         setMessage(viewModel, renderModel.labels.messages.serverError, false);
@@ -87,7 +88,6 @@ define([
         }
 
         setMessage(viewModel, data.message, true);
-        //window.location.reload();
       })
       .fail(function(err) {
         setMessage(viewModel, renderModel.labels.messages.serverError, false);
@@ -96,6 +96,26 @@ define([
         viewModel.layoutAuthViewModel().showLoadingImage(false);
       });
     }
+
+    function inviteUser(viewModel) {
+      viewModel.layoutAuthViewModel().showLoadingImage(true);
+      $.post('/account/inviteUser', { username: viewModel.teamPanelViewModel().usernameForAdd }, function(data) {
+        if(!data.success) {
+          setMessage(viewModel, data.message, false);
+          return;
+        }
+
+        viewModel.teamPanelViewModel().usernameForAdd(null);
+        setMessage(viewModel, data.message, true);
+      })
+      .fail(function(err) {
+        setMessage(viewModel, renderModel.labels.messages.serverError, false);
+      })
+      .always(function() {
+        viewModel.layoutAuthViewModel().showLoadingImage(false);
+      });
+    }
+
 
     // knockout view models
     function LayoutAuthViewModel(parent) {
@@ -193,7 +213,7 @@ define([
       self.users = ko.observableArray([]);
 
       self.inviteUserClick = function() {
-        alert('invite user');
+        inviteUser(self.parent());
       }
 
       self.leaveTeamClick = function() {

@@ -4,6 +4,7 @@ function init(router) {
 	var settings = require('../tools/settings');
 	var userModel = require(__common + "/models/user");
 	var teamModel = require(__common + "/models/team");
+	var inviteModel = require(__common + "/models/invite");
 
 	router.get('/:culture/account', function (req, res, next) {
 		if(!req.user.isAuthenticated) {
@@ -91,7 +92,11 @@ function init(router) {
 					return;
 				}
 
-			res.json({ success: true, message: req.body.newUsername });
+			res.json({
+				success: true,
+				message: settings.default(req).labels.pages.account.messages.usernameWasChanged,
+				newUsername: req.body.newUsername
+			});
 		});
 	});
 
@@ -195,6 +200,77 @@ function init(router) {
 		});
 	});
 
+	router.post('/account/inviteUser', function (req, res, next) {
+		if(!req.user.isAuthenticated) {
+			res.redirect(['/', req.params.culture].join(''));
+			return;
+		}
+
+		var labels = settings.default(req).labels;
+		// find user
+		userModel.findOne({username: req.body.username}, function(err, user) {
+			if(err) {
+				res.redirect(['/', req.params.culture].join(''));
+				return;
+			}
+
+			if(!user) {
+				res.json({success: false, message: labels.pages.account.messages.userNotFound});
+				return;
+			}
+
+			// find user team
+			teamModel.findOne({captainId: req.user._id}, function(err, team) {
+				if(err || !team) {
+					res.json({
+						message: settings.parseAuthError(req, err, 'account'),
+						success: false
+					});
+					return;
+				}
+
+				// check invite
+				inviteModel.count({fromUserId: req.user._id, fromTeamId: team._id, toUserId: user._id, active: true},
+					function(err, count) {
+						if(err) {
+							res.json({
+								message: settings.parseAuthError(req, err, 'account'),
+								success: false
+							});
+							return;
+						}
+
+						if(count > 0) {
+							res.json({
+								success: true,
+								message: labels.pages.account.messages.inviteWasSent
+							});
+							return;
+						}
+
+						// invite user
+						inviteModel.create({
+							fromUserId: req.user._id,
+							fromTeamId: team._id,
+							toUserId: user._id
+						}, function(err, invite) {
+							if((err && err.code !== 11000 && err.code !== 11001) || (!err && !invite)) {
+								res.json({
+									message: settings.parseAuthError(req, err, 'account'),
+									success: false
+								});
+								return;
+							}
+
+							res.json({
+								success: true,
+								message: labels.pages.account.messages.inviteWasSent
+							});
+						});
+				})
+			});
+		})
+	});
 }
 
 module.exports = { init: init };

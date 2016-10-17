@@ -122,8 +122,11 @@
 			"messages": {
 				"usernameLength": "Ник пользователя должно включать как минимум 3 символа",
 				"usernameSimilar": "Вы ввели тот же ник",
+				"usernameWasChanged": "Ник успешно изменен",
 				"passwordWasChanged": "Пароль успешно изменен",
-				"teamHasCreated": "Команда успешно создана"
+				"teamWasCreated": "Команда успешно создана",
+				"userNotFound": "Пользователь с таким ником не найден",
+				"inviteWasSent": "Приглашение отправлено"
 			}
 		}
 	}
