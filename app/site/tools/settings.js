@@ -13,7 +13,7 @@ function extendedSettings(req, extender) {
 }
 
 function parseAuthError(req, err, page) {
-	var labels = settings.default(req).labels;
+	var labels = defaultSettings(req).labels;
 
 	if(!err || !err.errors || !err.errors.length)
 		return labels.messages.serverError;

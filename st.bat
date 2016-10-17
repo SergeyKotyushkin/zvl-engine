@@ -1,2 +1,3 @@
 cls
-nf start
+
+nf start webDebug

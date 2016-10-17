@@ -8,7 +8,10 @@
 		"passwordLength": "Пароль должен включать как минимум 3 символа",
 		"invalidPassword": "Неверные учетные данные",
 		"passwordsMismatch": "Пароли не совпадают",
-		"invalidCredentials": "Неверные учетные данные"
+		"invalidCredentials": "Неверные учетные данные",
+		"teamNameAlreadyExists": "Такое название команды уже занято",
+		"teamNameLength": "Название команды должно включать как минимум 3 символа",
+		"userHasTeamAlready": "Вы уже состоите в команде"
 	},
 	"pages": {
 		"layout": {
@@ -65,7 +68,7 @@
 			},
 			"team": {
 				"header": "Информация о команде",
-				"yourTeam": "Команда",
+				"yourTeam": "Команда: ",
 				"captainInBrackets": "(Капитан)",
 				"composition": "Состав",
 				"captainPopup": "Капитан",
@@ -119,7 +122,8 @@
 			"messages": {
 				"usernameLength": "Ник пользователя должно включать как минимум 3 символа",
 				"usernameSimilar": "Вы ввели тот же ник",
-				"passwordWasChanged": "Пароль успешно изменен"
+				"passwordWasChanged": "Пароль успешно изменен",
+				"teamHasCreated": "Команда успешно создана"
 			}
 		}
 	}

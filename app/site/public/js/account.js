@@ -61,6 +61,41 @@ define([
       });
     }
 
+    function createTeam(viewModel) {
+      viewModel.layoutAuthViewModel().showLoadingImage(true);
+      $.post('/account/createTeam', {
+        newTeamName: viewModel.teamPanelViewModel().newTeamName()
+      }, function(data) {
+        if(!data.success) {
+          setMessage(viewModel, data.message, false);
+          return;
+        }
+
+        viewModel.teamPanelViewModel().isEmpty(data.isEmpty);
+        viewModel.teamPanelViewModel().users.removeAll();
+        if(!viewModel.teamPanelViewModel().isEmpty()){
+          viewModel.teamPanelViewModel().name(data.name);
+          viewModel.teamPanelViewModel().captainId(data.captainId);
+          viewModel.teamPanelViewModel().isCaptain(data.isCaptain);
+
+          for(var i = 0; i < data.users.length; i++) {
+            var teamUser = new TeamPanelUserViewModel(viewModel.teamPanelViewModel());
+            teamUser.userId(data.users[i]._id);
+            teamUser.username(data.users[i].username);
+            viewModel.teamPanelViewModel().users.push(teamUser);
+          }
+        }
+
+        setMessage(viewModel, data.message, true);
+        //window.location.reload();
+      })
+      .fail(function(err) {
+        setMessage(viewModel, renderModel.labels.messages.serverError, false);
+      })
+      .always(function() {
+        viewModel.layoutAuthViewModel().showLoadingImage(false);
+      });
+    }
 
     // knockout view models
     function LayoutAuthViewModel(parent) {
@@ -128,9 +163,10 @@ define([
     }
 
 
-    function TeamPanelUserViewModel() {
+    function TeamPanelUserViewModel(parent) {
       var self = this;
 
+      self.parent = ko.observable(parent);
       self.userId = ko.observable(null);
       self.username = ko.observable(null);
 
@@ -143,12 +179,13 @@ define([
       }
     }
 
-    function TeamPanelViewModel() {
+    function TeamPanelViewModel(parent) {
       var self = this;
 
+      self.parent = ko.observable(parent);
       self.isEmpty = ko.observable(true);
       self.name = ko.observable(null);
-      self.isCapitan = ko.observable(false);
+      self.isCaptain = ko.observable(false);
       self.captainId = ko.observable(null);
       self.usernameForAdd = ko.observable(null);
       self.newTeamName = ko.observable(null);
@@ -164,7 +201,13 @@ define([
       }
 
       self.createTeamClick = function() {
-        alert('create team');
+        self.newTeamName(self.newTeamName().trim());
+        if(self.newTeamName().length < 3) {
+          setMessage(self.parent(), renderModel.labels.messages.teamNameLength, false);
+          return;
+        }
+
+        createTeam(self.parent());
       }
     }
 
@@ -273,7 +316,7 @@ define([
 
       self.layoutAuthViewModel = ko.observable(new LayoutAuthViewModel(self));
       self.profilePanelViewModel = ko.observable(new ProfilePanelViewModel(self));
-      self.teamPanelViewModel = ko.observable(new TeamPanelViewModel());
+      self.teamPanelViewModel = ko.observable(new TeamPanelViewModel(self));
       self.invitePanelViewModel = ko.observable(new InvitePanelViewModel());
       self.emptyTeamsPanelViewModel = ko.observable(new EmptyTeamsPanelViewModel());
       self.gamesPanelViewModel = ko.observable(new GamesPanelViewModel());
@@ -308,5 +351,20 @@ define([
     viewModel.email(renderModel.layoutAuthRenderModel.user.email);
     viewModel.isAdmin(renderModel.layoutAuthRenderModel.user.isAdmin);
     viewModel.profilePanelViewModel().username(viewModel.username());
+
+    viewModel.teamPanelViewModel().isEmpty(renderModel.team.isEmpty);
+    viewModel.teamPanelViewModel().users.removeAll();
+    if(!viewModel.teamPanelViewModel().isEmpty()){
+      viewModel.teamPanelViewModel().name(renderModel.team.name);
+      viewModel.teamPanelViewModel().captainId(renderModel.team.captainId);
+      viewModel.teamPanelViewModel().isCaptain(renderModel.team.isCaptain);
+
+      for(var i = 0; i < renderModel.team.users.length; i++) {
+        var teamUser = new TeamPanelUserViewModel(viewModel.teamPanelViewModel());
+        teamUser.userId(renderModel.team.users[i]._id);
+        teamUser.username(renderModel.team.users[i].username);
+        viewModel.teamPanelViewModel().users.push(teamUser);
+      }
+    }
   });
 });
