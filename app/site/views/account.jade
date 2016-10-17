@@ -17,6 +17,12 @@ block content
       .close(data-bind="click: closeErrorClick") &times;
       span(data-bind="html: errorMessage")
       .clearfix
+  .col-xs-12(data-bind='if: hasSuccess')
+    .alert.alert-success.panel-content
+      .close(data-bind="click: closeSuccessClick") &times;
+      span(data-bind="html: successMessage")
+      .clearfix
+              
   .col-md-6
     .panel.panel-default.panel-content
       .panel-heading

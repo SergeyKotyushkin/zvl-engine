@@ -13,11 +13,17 @@ function extendedSettings(req, extender) {
 }
 
 function parseAuthError(req, err, page) {
+	var labels = settings.default(req).labels;
+
 	if(!err || !err.errors || !err.errors.length)
-		return settings.default(req).labels.pages.messages.serverError;
+		return labels.messages.serverError;
 
 	var messageKey = err.errors[Object.keys(err.errors)[0]].message;
-	return settings.default(req).labels.pages[page].messages[messageKey];
+	return labels.pages[page].messages[messageKey]
+		? labels.pages[page].messages[messageKey]
+		: labels.messages[messageKey]
+			? labels.messages[messageKey]
+			: labels.messages.serverError;
 }
 
 module.exports = {

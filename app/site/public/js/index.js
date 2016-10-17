@@ -106,7 +106,7 @@ define([
 
         var checkInputsResult = checkInputs(self);
         if(!checkInputsResult.success) {
-          self.errorMessage(renderModel.labels.index.messages[checkInputsResult.messageKey]);
+          self.errorMessage(renderModel.labels.messages[checkInputsResult.messageKey]);
           self.hasError(true);
           return;
         }

@@ -1,18 +1,28 @@
 define([
   'jquery',
   'knockout',
-  'bootstrap'
+  'bootstrap',
+  'cryptoJS'
 ], function ($, ko) {
 
   $(document).ready(function() {
+
+    function setMessage(viewModel, message, isSuccess) {
+      if(isSuccess)
+        viewModel.successMessage(message);
+      else
+        viewModel.errorMessage(message);
+
+      viewModel.hasError(!isSuccess);
+      viewModel.hasSuccess(isSuccess);
+    }
 
     // post functions
     function changeUsername(viewModel) {
       viewModel.layoutAuthViewModel().showLoadingImage(true);
       $.post('/account/changeUsername', { newUsername: viewModel.profilePanelViewModel().username }, function(data) {
         if(!data.success) {
-          viewModel.errorMessage(data.message);
-          viewModel.hasError(true);
+          setMessage(viewModel, data.message, false);
           return;
         }
 
@@ -20,8 +30,31 @@ define([
         viewModel.profilePanelViewModel().username(data.message);
       })
       .fail(function(err) {
-        viewModel.errorMessage(renderModel.labels.messages.serverError);
-        viewModel.hasError(true);
+        setMessage(viewModel, renderModel.labels.messages.serverError, false);
+      })
+      .always(function() {
+        viewModel.layoutAuthViewModel().showLoadingImage(false);
+      });
+    }
+
+    function changePassword(viewModel) {
+      viewModel.layoutAuthViewModel().showLoadingImage(true);
+      $.post('/account/changePassword', {
+        oldPassword: CryptoJS.MD5(viewModel.profilePanelViewModel().oldPassword()).toString(),
+        newPassword: CryptoJS.MD5(viewModel.profilePanelViewModel().newPassword()).toString()
+      }, function(data) {
+        if(!data.success) {
+          setMessage(viewModel, data.message, false);
+          return;
+        }
+
+        viewModel.profilePanelViewModel().oldPassword(null);
+        viewModel.profilePanelViewModel().newPassword(null);
+        viewModel.profilePanelViewModel().newConfirmedPassword(null);
+        setMessage(viewModel, renderModel.labels.account.messages.passwordWasChanged, true);
+      })
+      .fail(function(err) {
+        setMessage(viewModel, renderModel.labels.messages.serverError, false);
       })
       .always(function() {
         viewModel.layoutAuthViewModel().showLoadingImage(false);
@@ -66,14 +99,12 @@ define([
       self.updateUsernameClick = function() {
         self.username(self.username().trim());
         if(self.username().length < 3) {
-          self.parent().errorMessage(renderModel.labels.account.messages.usernameLength);
-          self.parent().hasError(true);
+          setMessage(self.parent(), renderModel.labels.account.messages.usernameLength, false);
           return;
         }
 
         if(self.username() === self.parent().username()) {
-          self.parent().errorMessage(renderModel.labels.account.messages.usernameSimilar);
-          self.parent().hasError(true);
+          setMessage(self.parent(), renderModel.labels.account.messages.usernameSimilar, false);
           return;
         }
 
@@ -81,7 +112,18 @@ define([
       }
 
       self.updatePasswordClick = function() {
-        alert('update password');
+        self.newPassword(self.newPassword().trim());
+        if(self.newPassword().length < 3) {
+          setMessage(self.parent(), renderModel.labels.messages.passwordLength, false);
+          return;
+        }
+
+        if(self.newPassword() !== self.newConfirmedPassword()) {
+          setMessage(self.parent(), renderModel.labels.messages.passwordsMismatch, false);
+          return;
+        }
+
+        changePassword(self.parent());
       }
     }
 
@@ -216,6 +258,7 @@ define([
       self.isChecked = ko.observable(false);
     }
 
+
     function AccountViewModel() {
       var self = this;
 
@@ -224,7 +267,9 @@ define([
       self.email = ko.observable(null);
       self.isAdmin = ko.observable(0);
       self.errorMessage = ko.observable('');
+      self.successMessage = ko.observable('');
       self.hasError = ko.observable(false);
+      self.hasSuccess = ko.observable(false);
 
       self.layoutAuthViewModel = ko.observable(new LayoutAuthViewModel(self));
       self.profilePanelViewModel = ko.observable(new ProfilePanelViewModel(self));
@@ -242,6 +287,11 @@ define([
       self.closeErrorClick = function() {
         self.errorMessage('')
         self.hasError(false);
+      }
+
+      self.closeSuccessClick = function() {
+        self.successMessage('')
+        self.hasSuccess(false);
       }
     }
 

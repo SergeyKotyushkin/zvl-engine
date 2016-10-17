@@ -59,11 +59,40 @@ function init(router) {
 					return;
 				}
 
-			console.log(user);
 			res.json({ success: true, message: req.body.newUsername });
 		});
 	});
-	
+
+	router.post('/account/changePassword', function (req, res, next) {
+		if(!req.user.isAuthenticated) {
+			res.redirect(['/', req.params.culture].join(''));
+			return;
+		}
+
+		userModel.findById(req.user._id, function(err, user) {
+			if(err || !user || !user.authenticate(req.body.oldPassword)) {
+				res.json({
+					message: settings.parseAuthError(req, err, 'account'),
+					success: false
+				});
+				return;
+			}
+
+			user.set('password', req.body.newPassword);
+			user.save(function(err, user) {
+				if(err || !user) {
+					res.json({
+						message: settings.parseAuthError(req, err, 'account'),
+						success: false
+					});
+					return;
+				}
+
+				res.json({ success: true });
+			});
+		});
+	});
+
 }
 
 module.exports = { init: init };

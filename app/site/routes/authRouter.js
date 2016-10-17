@@ -63,7 +63,7 @@ function init(router) {
         }
 
         if(!user) {
-          message = settings.default(req).labels.pages.index.messages.invalidCredentials;
+          message = settings.default(req).labels.messages.invalidCredentials;
         }
 
         if(err) {
