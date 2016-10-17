@@ -1,5 +1,6 @@
 function init(router) {
   var authenticator = require('../tools/authenticator');
+  var constants = require('../constants/index');
   var userModel = require(__common + '/models/user');
 	var settings = require('../tools/settings');
 

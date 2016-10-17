@@ -15,7 +15,7 @@ function extendedSettings(req, extender) {
 function parseAuthError(req, err, page) {
 	var labels = defaultSettings(req).labels;
 
-	if(!err || !err.errors || !err.errors.length)
+	if(!err || !err.errors)
 		return labels.messages.serverError;
 
 	var messageKey = err.errors[Object.keys(err.errors)[0]].message;

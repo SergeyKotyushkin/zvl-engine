@@ -41,8 +41,13 @@ function init(router) {
 
 			// Load team info
 			teamModel.findOne({userIds: user._id}, function(err, team) {
-				if(err || !team) {
+				if(err) {
 					res.redirect(['/', req.params.culture].join(''));
+					return;
+				}
+
+				if(!team) {
+					res.render('account', { renderModel: renderModel });
 					return;
 				}
 
