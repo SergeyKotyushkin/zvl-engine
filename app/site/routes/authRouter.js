@@ -26,7 +26,7 @@ function init(router) {
       }
 
       if(err) {
-        message = settings.parseAuthError(req, err, 'index');
+        message = settings.parseError(req, err, 'index');
       }
 
       var culture = req.cookies.culture
@@ -68,7 +68,7 @@ function init(router) {
         }
 
         if(err) {
-          message = settings.parseAuthError(req, err, 'index');
+          message = settings.parseError(req, err, 'index');
         }
 
         var culture = req.cookies.culture

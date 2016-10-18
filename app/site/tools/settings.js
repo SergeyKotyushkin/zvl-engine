@@ -12,13 +12,14 @@ function extendedSettings(req, extender) {
 	return utils.merge(extender, defaultSettings(req));
 }
 
-function parseAuthError(req, err, page) {
+function parseError(req, err, page) {
 	var labels = defaultSettings(req).labels;
+	var isErrorKey = Object.prototype.toString.call(err) == '[object String]';
 
-	if(!err || !err.errors)
+	if(!err || (!err.errors && !isErrorKey))
 		return labels.messages.serverError;
 
-	var messageKey = err.errors[Object.keys(err.errors)[0]].message;
+	var messageKey = isErrorKey ? err : err.errors[Object.keys(err.errors)[0]].message;
 	return labels.pages[page].messages[messageKey]
 		? labels.pages[page].messages[messageKey]
 		: labels.messages[messageKey]
@@ -29,5 +30,5 @@ function parseAuthError(req, err, page) {
 module.exports = {
 	'default': defaultSettings,
 	extended: extendedSettings,
-	parseAuthError: parseAuthError
+	parseError: parseError
 };

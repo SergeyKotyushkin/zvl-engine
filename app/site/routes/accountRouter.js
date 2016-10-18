@@ -7,27 +7,46 @@ function init(router) {
 	var inviteModel = require(__common + "/models/invite");
 
 
+	function handleLogoutError(res) {
+		authenticator.logout(res);
+		res.redirect('/');
+	}
+
+	function handleJsonError(req, res, err) {
+		res.json({
+			message: settings.parseError(req, err, 'account'),
+			success: false
+		});
+	}
+
 	function loadInvites(userId, callback) {
 		inviteModel
 			.find({ toUserId: userId, active: true })
 			.populate('fromTeamId', 'name')
 			.exec(function(err, invites) {
-				return callback({ invites: err ? null : invites });
+				return callback({ invites: err ? null : invites, err: err	});
 			})
 	}
 
+	function loadTeam(userId, callback) {
+		teamModel
+			.findOne({userIds: userId})
+			.populate('userIds', 'username')
+			.exec(function(err, team) {
+				return callback({ team: err ? null : team, err: err	});
+			})
+	}
+
+
 	router.get('/:culture/account', function (req, res, next) {
 		if(!req.user.isAuthenticated) {
-			res.redirect(['/', req.params.culture].join(''));
-			return;
+			return handleLogoutError(res);
 		}
 
 		// load user data
 		userModel.findOne({ _id: req.user._id }, function(err, user) {
 			if(err || !user) {
-				authenticator.logout(res);
-				res.redirect(['/', req.params.culture].join(''));
-				return;
+				return handleLogoutError(res);
 			}
 
 			var labels = settings.default(req).labels;
@@ -50,43 +69,30 @@ function init(router) {
 				}
 			};
 
-			// load invites
 			loadInvites(user._id, function(invitesResult) {
-				if(!invitesResult.invites) {
-					res.redirect(['/', req.params.culture].join(''));
-					return;
+				if(invitesResult.err) {
+					return handleLogoutError(res);
 				}
 
 				renderModel.invites = invitesResult.invites;
 
-				// Load team info
-				teamModel.findOne({userIds: user._id}, function(err, team) {
-					if(err) {
-						res.redirect(['/', req.params.culture].join(''));
-						return;
+				loadTeam(user._id, function(teamResult) {
+					if(teamResult.err) {
+						return handleLogoutError(res);
 					}
 
-					if(!team) {
-						res.render('account', { renderModel: renderModel });
-						return;
-					}
-
-					userModel.find({ _id: { $in: team.userIds } }, '_id username', function(err, users) {
-						if(err || !users) {
-							res.redirect(['/', req.params.culture].join(''));
-							return;
-						}
-
+					var team = teamResult.team;
+					if(team) {
 						renderModel.team = {
 							isEmpty: false,
 							name: team.name,
 							captainId: team.captainId,
 							isCaptain: team.captainId.equals(user._id),
-							users: users
+							users: team.userIds
 						};
+					}
 
-						res.render('account', { renderModel: renderModel });
-					})
+					res.render('account', { renderModel: renderModel });
 				});
 			});
 		});
@@ -95,8 +101,7 @@ function init(router) {
 	// ajax post requests
 	router.post('/account/changeUsername', function (req, res, next) {
 		if(!req.user.isAuthenticated) {
-			res.redirect(['/', req.params.culture].join(''));
-			return;
+			return handleLogoutError(res);
 		}
 
 		userModel.update(
@@ -105,44 +110,31 @@ function init(router) {
 			{},
 			function(err, user) {
 				if(err || !user) {
-					res.json({
-						message: settings.parseAuthError(req, err, 'account'),
-						success: false
-					});
-					return;
+					return handleJsonError(req, res, err);
 				}
 
-			res.json({
-				success: true,
-				message: settings.default(req).labels.pages.account.messages.usernameWasChanged,
-				newUsername: req.body.newUsername
+				res.json({
+					success: true,
+					message: settings.default(req).labels.pages.account.messages.usernameWasChanged,
+					newUsername: req.body.newUsername
 			});
 		});
 	});
 
 	router.post('/account/changePassword', function (req, res, next) {
 		if(!req.user.isAuthenticated) {
-			res.redirect(['/', req.params.culture].join(''));
-			return;
+			return handleLogoutError(res);
 		}
 
 		userModel.findById(req.user._id, function(err, user) {
 			if(err || !user || !user.authenticate(req.body.oldPassword)) {
-				res.json({
-					message: settings.parseAuthError(req, err, 'account'),
-					success: false
-				});
-				return;
+				return handleJsonError(req, res, err);
 			}
 
 			user.set('password', req.body.newPassword);
 			user.save(function(err, user) {
 				if(err || !user) {
-					res.json({
-						message: settings.parseAuthError(req, err, 'account'),
-						success: false
-					});
-					return;
+					return handleJsonError(req, res, err);
 				}
 
 				res.json({ success: true });
@@ -152,35 +144,22 @@ function init(router) {
 
 	router.post('/account/createTeam', function (req, res, next) {
 		if(!req.user.isAuthenticated) {
-			res.redirect(['/', req.params.culture].join(''));
-			return;
+			return handleLogoutError(res);
 		}
 
 		var labels = settings.default(req).labels;
 		userModel.findById(req.user._id, function(err, user) {
 			if(err || !user) {
-				res.json({
-					message: settings.parseAuthError(req, err, 'account'),
-					success: false
-				});
-				return;
+				return handleJsonError(req, res, err);
 			}
 
 			teamModel.find({userIds: req.user._id}, function(err, teams) {
 				if(err || !teams) {
-					res.json({
-						message: settings.parseAuthError(req, err, 'account'),
-						success: false
-					});
-					return;
+					return handleJsonError(req, res, err);
 				}
 
 				if(teams.length > 0) {
-					res.json({
-						message: labels.messages.userHasTeamAlready,
-						success: false
-					});
-					return;
+					return handleJsonError(req, res, labels.messages.userHasTeamAlready);
 				}
 
 				teamModel.create({
@@ -189,32 +168,19 @@ function init(router) {
 					userIds: [req.user._id]
 				}, function(err, team) {
 					if(err || !team) {
-						res.json({
-							message: settings.parseAuthError(req, err, 'account'),
-							success: false
-						});
-						return;
+						return handleJsonError(req, res, err);
 					}
 
-					userModel.find({ _id: { $in: team.userIds } }, '_id username', function(err, users) {
-						if(err || !users) {
-							res.json({
-								message: settings.parseAuthError(req, err, 'account'),
-								success: false
-							});
-							return;
-						}
-
-						res.json({
-							success: true,
-							isEmpty: false,
-							name: req.body.newTeamName,
-							captainId: team.captainId,
-							isCaptain: team.captainId.equals(user._id),
-							users: users,
-							message: labels.pages.account.messages.teamHasCreated
-						});
-					})
+					var userIds = [{ _id: user._id, username: user.username }];
+					res.json({
+						success: true,
+						isEmpty: false,
+						name: req.body.newTeamName,
+						captainId: team.captainId,
+						isCaptain: true,
+						users: userIds,
+						message: labels.pages.account.messages.teamHasCreated
+					});
 				});
 			});
 		});
@@ -222,64 +188,54 @@ function init(router) {
 
 	router.post('/account/inviteUser', function (req, res, next) {
 		if(!req.user.isAuthenticated) {
-			res.redirect(['/', req.params.culture].join(''));
-			return;
+			return handleLogoutError(res);
 		}
 
 		var labels = settings.default(req).labels;
+
 		// find user
 		userModel.findOne({username: req.body.username}, function(err, user) {
 			if(err) {
-				res.redirect(['/', req.params.culture].join(''));
-				return;
+				return handleLogoutError(res);
 			}
 
 			if(!user) {
-				res.json({success: false, message: labels.pages.account.messages.userNotFound});
-				return;
+				return handleJsonError(req, res, labels.pages.account.messages.userNotFound);
 			}
 
 			// find user team
 			teamModel.findOne({captainId: req.user._id}, function(err, team) {
 				if(err || !team) {
-					res.json({
-						message: settings.parseAuthError(req, err, 'account'),
-						success: false
-					});
-					return;
+					return handleJsonError(req, res, err);
 				}
 
 				// check invite
-				inviteModel.count({fromUserId: req.user._id, fromTeamId: team._id, toUserId: user._id, active: true},
-					function(err, count) {
-						if(err) {
-							res.json({
-								message: settings.parseAuthError(req, err, 'account'),
-								success: false
-							});
-							return;
-						}
+				inviteModel.count({
+					fromUserId: req.user._id,
+					fromTeamId: team._id,
+					toUserId: user._id,
+					active: true
+				}, function(err, count) {
+					if(err) {
+						return handleJsonError(req, res, err);
+					}
 
-						if(count > 0) {
-							res.json({
-								success: true,
-								message: labels.pages.account.messages.inviteWasSent
-							});
-							return;
-						}
+					if(count > 0) {
+						res.json({
+							success: true,
+							message: labels.pages.account.messages.inviteWasSent
+						});
+						return;
+					}
 
-						// invite user
-						inviteModel.create({
+					// invite user
+					inviteModel.create({
 							fromUserId: req.user._id,
 							fromTeamId: team._id,
 							toUserId: user._id
 						}, function(err, invite) {
 							if((err && err.code !== 11000 && err.code !== 11001) || (!err && !invite)) {
-								res.json({
-									message: settings.parseAuthError(req, err, 'account'),
-									success: false
-								});
-								return;
+								return handleJsonError(req, res, err);
 							}
 
 							res.json({
@@ -287,9 +243,9 @@ function init(router) {
 								message: labels.pages.account.messages.inviteWasSent
 							});
 						});
-				})
+				});
 			});
-		})
+		});
 	});
 }
 
