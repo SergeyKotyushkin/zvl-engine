@@ -6,6 +6,16 @@ function init(router) {
 	var teamModel = require(__common + "/models/team");
 	var inviteModel = require(__common + "/models/invite");
 
+
+	function loadInvites(userId, callback) {
+		inviteModel
+			.find({ toUserId: userId, active: true })
+			.populate('fromTeamId', 'name')
+			.exec(function(err, invites) {
+				return callback({ invites: err ? null : invites });
+			})
+	}
+
 	router.get('/:culture/account', function (req, res, next) {
 		if(!req.user.isAuthenticated) {
 			res.redirect(['/', req.params.culture].join(''));
@@ -40,35 +50,45 @@ function init(router) {
 				}
 			};
 
-			// Load team info
-			teamModel.findOne({userIds: user._id}, function(err, team) {
-				if(err) {
+			// load invites
+			loadInvites(user._id, function(invitesResult) {
+				if(!invitesResult.invites) {
 					res.redirect(['/', req.params.culture].join(''));
 					return;
 				}
 
-				if(!team) {
-					res.render('account', { renderModel: renderModel });
-					return;
-				}
+				renderModel.invites = invitesResult.invites;
 
-				userModel.find({ _id: { $in: team.userIds } }, '_id username', function(err, users) {
-					if(err || !users) {
+				// Load team info
+				teamModel.findOne({userIds: user._id}, function(err, team) {
+					if(err) {
 						res.redirect(['/', req.params.culture].join(''));
 						return;
 					}
 
-					renderModel.team = {
-						isEmpty: false,
-						name: team.name,
-						captainId: team.captainId,
-						isCaptain: team.captainId.equals(user._id),
-						users: users
+					if(!team) {
+						res.render('account', { renderModel: renderModel });
+						return;
 					}
-					res.render('account', { renderModel: renderModel });
-				});
 
-			})
+					userModel.find({ _id: { $in: team.userIds } }, '_id username', function(err, users) {
+						if(err || !users) {
+							res.redirect(['/', req.params.culture].join(''));
+							return;
+						}
+
+						renderModel.team = {
+							isEmpty: false,
+							name: team.name,
+							captainId: team.captainId,
+							isCaptain: team.captainId.equals(user._id),
+							users: users
+						};
+
+						res.render('account', { renderModel: renderModel });
+					})
+				});
+			});
 		});
 	});
 

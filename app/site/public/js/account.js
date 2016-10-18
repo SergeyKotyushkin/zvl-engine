@@ -235,7 +235,8 @@ define([
     function InvitePanelInviteViewModel() {
       var self = this;
 
-      self.fromTeamName = ko.observableArray(null);
+      self.id = ko.observable();
+      self.fromTeamName = ko.observable(null);
 
       self.commitClick = function() {
         alert('commit');
@@ -384,6 +385,15 @@ define([
         teamUser.userId(renderModel.team.users[i]._id);
         teamUser.username(renderModel.team.users[i].username);
         viewModel.teamPanelViewModel().users.push(teamUser);
+      }
+    }
+
+    if(renderModel.invites) {
+      for(var i = 0; i < renderModel.invites.length; i++) {
+        var invite = new InvitePanelInviteViewModel();
+        invite.id(renderModel.invites[i]._id);
+        invite.fromTeamName(renderModel.invites[i].fromTeamId.name);
+        viewModel.invitePanelViewModel().invites.push(invite);
       }
     }
   });
