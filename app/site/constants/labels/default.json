@@ -72,6 +72,7 @@
 				"captainInBrackets": "(Капитан)",
 				"composition": "Состав",
 				"captainPopup": "Капитан",
+				"setCaptainPopup": "Передать капитанство",
 				"removeUserFromTeamPopup": "Удалить из команды",
 				"invite": {
 					"header": "Пригласить в команду",
@@ -129,7 +130,9 @@
 				"inviteLoop": "Нельзя отправить приглашение самому себе",
 				"inviteWasSent": "Приглашение отправлено",
 				"inviteLeaveTeamBefore": "Сначала покиньте текущую команду",
-				"inviteCanceled": "Вы отклонили приглашение"
+				"inviteCanceled": "Вы отклонили приглашение",
+				"capitanWasChanged": "Вы передали капитанство",
+				"userWasRemovedfromTeam": "Пользователь удалён из команды"
  			}
 		}
 	}

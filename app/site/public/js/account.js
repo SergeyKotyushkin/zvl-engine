@@ -167,6 +167,46 @@ define([
       });
     }
 
+    function setCaptain(viewModel, userId) {
+      viewModel.layoutAuthViewModel().showLoadingImage(true);
+      $.post('/account/setCaptain', { userId: userId }, function(data) {
+        if(!data.success) {
+          setMessage(viewModel, data.message, false);
+          return;
+        }
+
+        viewModel.teamPanelViewModel().isCaptain(false);
+        viewModel.teamPanelViewModel().captainId(userId);
+        setMessage(viewModel, data.message, true);
+      })
+      .fail(function(err) {
+        setMessage(viewModel, renderModel.labels.messages.serverError, false);
+      })
+      .always(function() {
+        viewModel.layoutAuthViewModel().showLoadingImage(false);
+      });
+    }
+
+    function removeFromTeam(viewModel, userId) {
+      viewModel.layoutAuthViewModel().showLoadingImage(true);
+      $.post('/account/removeFromTeam', { userId: userId }, function(data) {
+        if(!data.success) {
+          setMessage(viewModel, data.message, false);
+          return;
+        }
+
+        viewModel.teamPanelViewModel().users.remove(function(user) {
+          return user.userId() === userId;
+        });
+        setMessage(viewModel, data.message, true);
+      })
+      .fail(function(err) {
+        setMessage(viewModel, renderModel.labels.messages.serverError, false);
+      })
+      .always(function() {
+        viewModel.layoutAuthViewModel().showLoadingImage(false);
+      });
+    }
 
     // knockout view models
     function LayoutAuthViewModel(parent) {
@@ -242,11 +282,11 @@ define([
       self.username = ko.observable(null);
 
       self.setCaptainClick = function(user) {
-        alert('set captain');
+        setCaptain(viewModel, self.userId());
       }
 
       self.removeFromTeamClick = function(user) {
-        alert('remove from team');
+        removeFromTeam(viewModel, self.userId())
       }
     }
 

@@ -11,8 +11,6 @@ var schema = new Schema({
 	answer: { type: Number, default: 0 }
 });
 
-schema.index({ fromTeamId: 1, toUserId: 1, active: 1}, { unique: true });
-
 var model;
 
 if (mongo.models.TeamUser) {

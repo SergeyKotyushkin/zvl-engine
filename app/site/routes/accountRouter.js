@@ -295,6 +295,50 @@ function init(router) {
 			});
 		});
 	});
+
+	router.post('/account/setCaptain', function (req, res, next) {
+		if(!req.user.isAuthenticated) {
+			return handleLogoutError(res);
+		}
+
+		var labels = settings.default(req).labels;
+
+		teamModel.findOne({ captainId: req.user._id, userIds: req.body.userId }, function(err, team) {
+			if(err || !team) {
+				return handleJsonError(req, res, err);
+			}
+
+			teamModel.update({_id: team._id}, {captainId: req.body.userId}, {}, function(err, teamUpdated) {
+				if(err || !teamUpdated) {
+					return handleJsonError(req, res, err);
+				}
+
+				return res.json({success: true, message: labels.pages.account.messages.capitanWasChanged})
+			})
+		})
+	});
+
+	router.post('/account/removeFromTeam', function (req, res, next) {
+		if(!req.user.isAuthenticated) {
+			return handleLogoutError(res);
+		}
+
+		var labels = settings.default(req).labels;
+
+		teamModel.findOne({ captainId: req.user._id, userIds: req.body.userId }, function(err, team) {
+			if(err || !team) {
+				return handleJsonError(req, res, err);
+			}
+
+			teamModel.update({_id: team._id}, {$pull: {userIds: req.body.userId}}, {}, function(err, teamUpdated) {
+				if(err || !teamUpdated) {
+					return handleJsonError(req, res, err);
+				}
+
+				return res.json({success: true, message: labels.pages.account.messages.userWasRemovedfromTeam})
+			})
+		})
+	});
 }
 
 module.exports = { init: init };

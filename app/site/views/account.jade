@@ -78,10 +78,13 @@ block content
                     i.fa.fa-lg.fa-star.captain-star(title= renderModel.labels.account.team.captainPopup)
                   span(data-bind='if: parent().captainId() !== userId()')
                     | &nbsp;
-                    i.fa.fa-lg.fa-star.member-star(data-bind='click: setCaptainClick')
+                    span(data-bind='if: parent().isCaptain()')
+                      i.fa.fa-lg.fa-star.member-star(data-bind='click: setCaptainClick', title=renderModel.labels.account.team.setCaptainPopup)
+                    span(data-bind='if: !parent().isCaptain()')
+                      i.fa.fa-lg.fa-star.member-star
                   span(data-bind='if: parent().isCaptain() && $root.userId() !== userId()')
                     | &nbsp;
-                    i.fa.fa-times.remove-user(title= renderModel.labels.account.team.removeUserFromTeamPopup, data-bind='click: $removeFromTeamClick')
+                    i.fa.fa-times.remove-user(title= renderModel.labels.account.team.removeUserFromTeamPopup, data-bind='click: removeFromTeamClick')
 
         div(data-bind='if: !teamPanelViewModel().isEmpty() && teamPanelViewModel().isCaptain()')
           .panel.panel-default.panel-content.clearfix
