@@ -17,6 +17,24 @@ define([
       viewModel.hasSuccess(isSuccess);
     }
 
+    function setTeam(viewModel, team) {
+      viewModel.teamPanelViewModel().isEmpty(team.isEmpty);
+      viewModel.teamPanelViewModel().users.removeAll();
+      if(!viewModel.teamPanelViewModel().isEmpty()){
+        viewModel.teamPanelViewModel().name(team.name);
+        viewModel.teamPanelViewModel().captainId(team.captainId);
+        viewModel.teamPanelViewModel().isCaptain(team.isCaptain);
+
+        for(var i = 0; i < team.users.length; i++) {
+          var teamUser = new TeamPanelUserViewModel(viewModel.teamPanelViewModel());
+          teamUser.userId(team.users[i]._id);
+          teamUser.username(team.users[i].username);
+          viewModel.teamPanelViewModel().users.push(teamUser);
+        }
+      }
+    }
+
+
     // post functions
     function changeUsername(viewModel) {
       viewModel.layoutAuthViewModel().showLoadingImage(true);
@@ -72,21 +90,7 @@ define([
           return;
         }
 
-        viewModel.teamPanelViewModel().isEmpty(data.isEmpty);
-        viewModel.teamPanelViewModel().users.removeAll();
-        if(!viewModel.teamPanelViewModel().isEmpty()){
-          viewModel.teamPanelViewModel().name(data.name);
-          viewModel.teamPanelViewModel().captainId(data.captainId);
-          viewModel.teamPanelViewModel().isCaptain(data.isCaptain);
-
-          for(var i = 0; i < data.users.length; i++) {
-            var teamUser = new TeamPanelUserViewModel(viewModel.teamPanelViewModel());
-            teamUser.userId(data.users[i]._id);
-            teamUser.username(data.users[i].username);
-            viewModel.teamPanelViewModel().users.push(teamUser);
-          }
-        }
-
+        setTeam(viewModel, data);
         setMessage(viewModel, data.message, true);
       })
       .fail(function(err) {
@@ -373,20 +377,7 @@ define([
     viewModel.isAdmin(renderModel.layoutAuthRenderModel.user.isAdmin);
     viewModel.profilePanelViewModel().username(viewModel.username());
 
-    viewModel.teamPanelViewModel().isEmpty(renderModel.team.isEmpty);
-    viewModel.teamPanelViewModel().users.removeAll();
-    if(!viewModel.teamPanelViewModel().isEmpty()){
-      viewModel.teamPanelViewModel().name(renderModel.team.name);
-      viewModel.teamPanelViewModel().captainId(renderModel.team.captainId);
-      viewModel.teamPanelViewModel().isCaptain(renderModel.team.isCaptain);
-
-      for(var i = 0; i < renderModel.team.users.length; i++) {
-        var teamUser = new TeamPanelUserViewModel(viewModel.teamPanelViewModel());
-        teamUser.userId(renderModel.team.users[i]._id);
-        teamUser.username(renderModel.team.users[i].username);
-        viewModel.teamPanelViewModel().users.push(teamUser);
-      }
-    }
+    setTeam(viewModel, renderModel.team);
 
     if(renderModel.invites) {
       for(var i = 0; i < renderModel.invites.length; i++) {
