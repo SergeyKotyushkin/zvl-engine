@@ -184,7 +184,7 @@ define([
       self.toAccountClick = function() { }
 
       self.backClick = function() {
-        alert('back');
+        window.location = "/";
       }
 
       self.title.subscribe(function(newTitle) {
