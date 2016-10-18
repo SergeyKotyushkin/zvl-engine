@@ -34,8 +34,33 @@ define([
       }
     }
 
+    function setInvites(viewModel, invites) {
+      viewModel.invitePanelViewModel().invites.removeAll();
+      if(invites) {
+        for(var i = 0; i < invites.length; i++) {
+          var invite = new InvitePanelInviteViewModel(viewModel.invitePanelViewModel());
+          invite.id(invites[i]._id);
+          invite.fromTeamName(invites[i].fromTeamId.name);
+          viewModel.invitePanelViewModel().invites.push(invite);
+        }
+      }
+    }
+
 
     // post functions
+    function post(url, data, success, fail, always) {
+      $.ajax({
+        url: url,
+        type: "POST",
+        data: JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(data) { success(data); },
+        error: function() { fail(); }
+      })
+      .always(function() { always(); })
+    }
+
     function changeUsername(viewModel) {
       viewModel.layoutAuthViewModel().showLoadingImage(true);
       $.post('/account/changeUsername', { newUsername: viewModel.profilePanelViewModel().username }, function(data) {
@@ -116,6 +141,28 @@ define([
         setMessage(viewModel, renderModel.labels.messages.serverError, false);
       })
       .always(function() {
+        viewModel.layoutAuthViewModel().showLoadingImage(false);
+      });
+    }
+
+    function inviteUserAnswer(viewModel, inviteId, answer) {
+      viewModel.layoutAuthViewModel().showLoadingImage(true);
+      post('/account/inviteUserAnswer', { inviteId: inviteId, answer: answer }, function(data) {
+        if(!data.success) {
+          setMessage(viewModel, data.message, false);
+          return;
+        }
+
+        if(answer)
+          window.location.reload();
+
+        viewModel.invitePanelViewModel().invites.remove(function(invite) {
+          return invite.id() === inviteId;
+        });
+        setMessage(viewModel, data.message, true);
+      }, function(err) {
+        setMessage(viewModel, renderModel.labels.messages.serverError, false);
+      },function() {
         viewModel.layoutAuthViewModel().showLoadingImage(false);
       });
     }
@@ -236,24 +283,26 @@ define([
     }
 
 
-    function InvitePanelInviteViewModel() {
+    function InvitePanelInviteViewModel(parent) {
       var self = this;
 
+      self.parent = ko.observable(parent);
       self.id = ko.observable();
       self.fromTeamName = ko.observable(null);
 
       self.commitClick = function() {
-        alert('commit');
+        inviteUserAnswer(self.parent().parent(), self.id(), true);
       }
 
       self.cancelClick = function() {
-        alert('cancel');
+        inviteUserAnswer(self.parent().parent(), self.id(), false);
       }
     }
 
-    function InvitePanelViewModel() {
+    function InvitePanelViewModel(parent) {
       var self = this;
 
+      self.parent = ko.observable(parent);
       self.invites = ko.observableArray([]);
     }
 
@@ -342,7 +391,7 @@ define([
       self.layoutAuthViewModel = ko.observable(new LayoutAuthViewModel(self));
       self.profilePanelViewModel = ko.observable(new ProfilePanelViewModel(self));
       self.teamPanelViewModel = ko.observable(new TeamPanelViewModel(self));
-      self.invitePanelViewModel = ko.observable(new InvitePanelViewModel());
+      self.invitePanelViewModel = ko.observable(new InvitePanelViewModel(self));
       self.emptyTeamsPanelViewModel = ko.observable(new EmptyTeamsPanelViewModel());
       self.gamesPanelViewModel = ko.observable(new GamesPanelViewModel());
 
@@ -378,14 +427,6 @@ define([
     viewModel.profilePanelViewModel().username(viewModel.username());
 
     setTeam(viewModel, renderModel.team);
-
-    if(renderModel.invites) {
-      for(var i = 0; i < renderModel.invites.length; i++) {
-        var invite = new InvitePanelInviteViewModel();
-        invite.id(renderModel.invites[i]._id);
-        invite.fromTeamName(renderModel.invites[i].fromTeamId.name);
-        viewModel.invitePanelViewModel().invites.push(invite);
-      }
-    }
+    setInvites(viewModel, renderModel.invites);
   });
 });

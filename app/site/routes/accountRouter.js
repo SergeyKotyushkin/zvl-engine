@@ -203,6 +203,10 @@ function init(router) {
 				return handleJsonError(req, res, labels.pages.account.messages.userNotFound);
 			}
 
+			if(user._id.equals(req.user._id)) {
+				return handleJsonError(req, res, labels.pages.account.messages.inviteLoop);
+			}
+
 			// find user team
 			teamModel.findOne({captainId: req.user._id}, function(err, team) {
 				if(err || !team) {
@@ -244,6 +248,50 @@ function init(router) {
 							});
 						});
 				});
+			});
+		});
+	});
+
+	router.post('/account/inviteUserAnswer', function (req, res, next) {
+		if(!req.user.isAuthenticated) {
+			return handleLogoutError(res);
+		}
+
+		var labels = settings.default(req).labels;
+
+		teamModel.count({userIds: req.user._id}, function(err, count) {
+			if(err) {
+				return handleLogoutError(res);
+			}
+
+			if(req.body.answer && count > 0) {
+				return handleJsonError(req, res, labels.pages.account.messages.inviteLeaveTeamBefore);
+			}
+
+			inviteModel.findOneAndUpdate(
+				{_id: req.body.inviteId},
+				{answer: req.body.answer ? 1 : -1, active: false},
+				{new: true},
+				function(err, invite) {
+					if(err || !invite) {
+						return handleJsonError(req, res, err);
+					}
+
+					if(!req.body.answer) {
+						res.json({success: true, message: labels.pages.account.messages.inviteCanceled});
+						return;
+					}
+
+					teamModel.update(
+						{ _id: invite.fromTeamId },
+						{ $push: { userIds: req.user._id } },
+						{}, function(err, team) {
+							if(err || !team) {
+								return handleJsonError(req, res, err);
+							}
+
+							res.json({success: true});
+					})
 			});
 		});
 	});

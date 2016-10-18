@@ -14,12 +14,15 @@ function extendedSettings(req, extender) {
 
 function parseError(req, err, page) {
 	var labels = defaultSettings(req).labels;
-	var isErrorKey = Object.prototype.toString.call(err) == '[object String]';
+	var isErrorMessage = Object.prototype.toString.call(err) == '[object String]';
 
-	if(!err || (!err.errors && !isErrorKey))
+	if(!err || (!err.errors && !isErrorMessage))
 		return labels.messages.serverError;
 
-	var messageKey = isErrorKey ? err : err.errors[Object.keys(err.errors)[0]].message;
+	if(isErrorMessage)
+		return err;
+
+	var messageKey = err.errors[Object.keys(err.errors)[0]].message;
 	return labels.pages[page].messages[messageKey]
 		? labels.pages[page].messages[messageKey]
 		: labels.messages[messageKey]
