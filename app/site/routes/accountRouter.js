@@ -384,6 +384,63 @@ function init(router) {
 			})
 		})
 	});
+
+	router.post('/account/enterEmptyTeam', function (req, res, next) {
+		if(!req.user.isAuthenticated) {
+			return handleLogoutError(res);
+		}
+
+		var labels = settings.default(req).labels;
+
+		teamModel.count({ userIds: req.user._id }, function(err, count) {
+			if(err) {
+				return handleJsonError(req, res, err);
+			}
+
+			if(count !== 0) {
+				return handleJsonError(req, res, labels.pages.account.messages.enterTeamUserHasTeam);
+			}
+
+			teamModel.findById(req.body.teamId, function(err, team) {
+				if(err || !team) {
+					return handleJsonError(req, res, err);
+				}
+
+				if(team.userIds.length) {
+					return handleJsonError(req, res, labels.pages.account.messages.enterTeamNotEmpty);
+				}
+
+				if(!team.captainId.equals(req.user._id)) {
+					return handleJsonError(req, res, labels.pages.account.messages.enterTeamNotForThisUser);
+				}
+
+				teamModel.findOneAndUpdate({_id: team._id}, {$push: {userIds: req.user._id}}, {new: true}, function(err, teamUpdated) {
+					if(err || !teamUpdated) {
+						return handleJsonError(req, res, err);
+					}
+
+					loadTeam(req.user._id, function(teamResult) {
+						if(teamResult.err) {
+							return handleLogoutError(res);
+						}
+
+						return res.json({
+							success: true,
+							team: {
+								isEmpty: false,
+								name: teamResult.team.name,
+								captainId: teamResult.team.captainId,
+								isCaptain: teamResult.team.captainId.equals(req.user._id),
+								users: teamResult.team.userIds
+							},
+							message: labels.pages.account.messages.userHasEnteredEmptyTeam
+						});
+					});
+				});
+
+			})
+		})
+	});
 }
 
 module.exports = { init: init };

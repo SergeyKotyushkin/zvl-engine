@@ -49,7 +49,7 @@ define([
     function setEmptyTeams(viewModel, emptyTeams) {
       viewModel.emptyTeamsPanelViewModel().emptyTeams.removeAll();
       for(var i = 0; i < emptyTeams.length; i++) {
-        var emptyTeam = new EmptyTeamsPanelEmptyTeamViewModel();
+        var emptyTeam = new EmptyTeamsPanelEmptyTeamViewModel(viewModel.emptyTeamsPanelViewModel());
         emptyTeam.id(emptyTeams[i]._id);
         emptyTeam.name(emptyTeams[i].name);
         viewModel.emptyTeamsPanelViewModel().emptyTeams.push(emptyTeam);
@@ -243,6 +243,28 @@ define([
       });
     }
 
+    function enterEmptyTeam(viewModel, teamId) {
+      viewModel.layoutAuthViewModel().showLoadingImage(true);
+      $.post('/account/enterEmptyTeam', {teamId: teamId}, function(data) {
+        if(!data.success) {
+          setMessage(viewModel, data.message, false);
+          return;
+        }
+
+        setTeam(viewModel, data.team);
+        viewModel.emptyTeamsPanelViewModel().emptyTeams.remove(function(emptyTeam) {
+          return emptyTeam.id() === teamId;
+        })
+        setMessage(viewModel, data.message, true);
+      })
+      .fail(function(err) {
+        setMessage(viewModel, renderModel.labels.messages.serverError, false);
+      })
+      .always(function() {
+        viewModel.layoutAuthViewModel().showLoadingImage(false);
+      });
+    }
+
 
     // knockout view models
     function LayoutAuthViewModel(parent) {
@@ -383,20 +405,22 @@ define([
     }
 
 
-    function EmptyTeamsPanelEmptyTeamViewModel() {
+    function EmptyTeamsPanelEmptyTeamViewModel(parent) {
       var self = this;
 
+      self.parent = ko.observable(parent);
       self.id = ko.observable(null);
       self.name = ko.observable(null);
 
       self.enterTeamClick = function() {
-        alert('enter team');
+        enterEmptyTeam(self.parent().parent(), self.id());
       }
     }
 
-    function EmptyTeamsPanelViewModel() {
+    function EmptyTeamsPanelViewModel(parent) {
       var self = this;
 
+      self.parent = ko.observable(parent);
       self.emptyTeams = ko.observableArray([]);
     }
 
@@ -469,7 +493,7 @@ define([
       self.profilePanelViewModel = ko.observable(new ProfilePanelViewModel(self));
       self.teamPanelViewModel = ko.observable(new TeamPanelViewModel(self));
       self.invitePanelViewModel = ko.observable(new InvitePanelViewModel(self));
-      self.emptyTeamsPanelViewModel = ko.observable(new EmptyTeamsPanelViewModel());
+      self.emptyTeamsPanelViewModel = ko.observable(new EmptyTeamsPanelViewModel(self));
       self.gamesPanelViewModel = ko.observable(new GamesPanelViewModel());
 
       self.allTeams = ko.observableArray([]);

@@ -134,7 +134,11 @@
 				"capitanWasChanged": "Вы передали капитанство",
 				"userWasRemovedfromTeam": "Пользователь удалён из команды",
 				"leaveTeamResetCaptain": "Сначала передайте капитанские права",
-				"userHasLeftTeam": "Вы вышли из команды"
+				"userHasLeftTeam": "Вы вышли из команды",
+				"enterTeamUserHasTeam": "Сначала покиньте текущую команду",
+				"enterTeamNotEmpty": "Команда в которую вы хотите вернуться не пустая",
+				"enterTeamNotForThisUser": "Вы не можете вернуться в эту команду",
+				"userHasEnteredEmptyTeam": "Вы вернулись в команду"
  			}
 		}
 	}
