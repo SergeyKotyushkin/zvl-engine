@@ -435,9 +435,9 @@ define([
     function GamesPanelGameViewModel() {
       var self = this;
 
-      self.name = ko.observableArray(null);
-      self.enableActive = ko.observableArray(false);
-      self.enableStatistics = ko.observableArray(false);
+      self.name = ko.observable(null);
+      self.enableActive = ko.observable(false);
+      self.enableStatistics = ko.observable(false);
 
       self.teams = ko.observableArray([]);
 
@@ -464,7 +464,7 @@ define([
       self.games = ko.observableArray([]);
 
       self.createGameClick = function() {
-        alert('create game');
+        window.location = "creator";
       }
     }
 

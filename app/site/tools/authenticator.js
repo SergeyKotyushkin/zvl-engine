@@ -6,7 +6,7 @@ var expressJwt = require('express-jwt');
 var logger = require(__common + '/tools/logger')('Authentificator');
 
 var secret = new Buffer(__env.JWTSECRET, 'base64');
-var anonymous = { isAuthenticated: false };
+var anonymous = { isAuthenticated: false, isAdmin: false };
 var cookieAge = 1000 * 60 * 60 * 24 * 7;
 
 var jwtmidlware = expressJwt({

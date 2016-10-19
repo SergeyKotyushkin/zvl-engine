@@ -77,3 +77,7 @@ body {
 .cap > .div :hover {
     color: rgb(163, 226, 65);
 }
+
+.panel-content {
+    margin: 10px 5px;
+}

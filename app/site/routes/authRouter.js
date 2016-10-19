@@ -18,7 +18,8 @@ function init(router) {
           var publicModel = {
             _id: user._id,
             email: user.email,
-            isAuthenticated: true
+            isAuthenticated: true,
+            isAdmin: user.isAdmin
           };
 
           authenticator.sign(res, publicModel);
@@ -53,7 +54,8 @@ function init(router) {
             var publicModel = {
               _id: user._id,
               email: user.email,
-              isAuthenticated: true
+              isAuthenticated: true,
+              isAdmin: user.isAdmin
             };
 
             authenticator.sign(res, publicModel);

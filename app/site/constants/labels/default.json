@@ -140,6 +140,9 @@
 				"enterTeamNotForThisUser": "Вы не можете вернуться в эту команду",
 				"userHasEnteredEmptyTeam": "Вы вернулись в команду"
  			}
+		},
+		"creator": {
+			"title": "Создание игры"
 		}
 	}
 }

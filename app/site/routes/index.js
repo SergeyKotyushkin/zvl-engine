@@ -5,5 +5,6 @@ require('./indexRouter').init(router);
 require('./authRouter').init(router);
 require('./centerRouter').init(router);
 require('./accountRouter').init(router);
+require('./creatorRouter').init(router);
 
 module.exports = router;
