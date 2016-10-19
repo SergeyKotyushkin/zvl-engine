@@ -132,7 +132,9 @@
 				"inviteLeaveTeamBefore": "Сначала покиньте текущую команду",
 				"inviteCanceled": "Вы отклонили приглашение",
 				"capitanWasChanged": "Вы передали капитанство",
-				"userWasRemovedfromTeam": "Пользователь удалён из команды"
+				"userWasRemovedfromTeam": "Пользователь удалён из команды",
+				"leaveTeamResetCaptain": "Сначала передайте капитанские права",
+				"userHasLeftTeam": "Вы вышли из команды"
  			}
 		}
 	}

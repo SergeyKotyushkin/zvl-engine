@@ -339,6 +339,33 @@ function init(router) {
 			})
 		})
 	});
+
+	router.post('/account/leaveTeam', function (req, res, next) {
+		if(!req.user.isAuthenticated) {
+			return handleLogoutError(res);
+		}
+
+		var labels = settings.default(req).labels;
+
+		teamModel.find({ userIds: req.user._id }, function(err, teams) {
+			if(err || !teams || teams.length !== 1) {
+				return handleJsonError(req, res, err);
+			}
+
+			var team = teams[0];
+			if(team.captainId.equals(req.user._id) && team.userIds.length !== 1) {
+				return handleJsonError(req, res, labels.pages.account.messages.leaveTeamResetCaptain);
+			}
+
+			teamModel.update({_id: team._id}, {$pull: {userIds: req.user._id}}, {}, function(err, teamUpdated) {
+				if(err || !teamUpdated) {
+					return handleJsonError(req, res, err);
+				}
+
+				return res.json({success: true, message: labels.pages.account.messages.userHasLeftTeam})
+			})
+		})
+	});
 }
 
 module.exports = { init: init };

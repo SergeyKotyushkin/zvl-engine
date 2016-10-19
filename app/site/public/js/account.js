@@ -208,6 +208,30 @@ define([
       });
     }
 
+    function leaveTeam(viewModel, userId) {
+      viewModel.layoutAuthViewModel().showLoadingImage(true);
+      $.post('/account/leaveTeam', {}, function(data) {
+        if(!data.success) {
+          setMessage(viewModel, data.message, false);
+          return;
+        }
+
+        viewModel.teamPanelViewModel().isEmpty(true);
+        viewModel.teamPanelViewModel().users.removeAll();
+        viewModel.teamPanelViewModel().name(null);
+        viewModel.teamPanelViewModel().captainId(null);
+        viewModel.teamPanelViewModel().isCaptain(null);
+        setMessage(viewModel, data.message, true);
+      })
+      .fail(function(err) {
+        setMessage(viewModel, renderModel.labels.messages.serverError, false);
+      })
+      .always(function() {
+        viewModel.layoutAuthViewModel().showLoadingImage(false);
+      });
+    }
+
+
     // knockout view models
     function LayoutAuthViewModel(parent) {
       var self = this;
@@ -308,7 +332,7 @@ define([
       }
 
       self.leaveTeamClick = function() {
-        alert('leave team');
+        leaveTeam(self.parent());
       }
 
       self.createTeamClick = function() {
