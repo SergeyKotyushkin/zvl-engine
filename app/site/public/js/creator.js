@@ -36,6 +36,9 @@ define([
         }
 
         self.removeAnswer = function (answer) {
+            if(!confirm(renderModel.labels.creator.messages.removeAnswer))
+              return;
+
             self.answers.remove(answer);
         }
     };
@@ -62,7 +65,10 @@ define([
         }
 
         self.removeImage = function (image) {
-            self.images.remove(image);
+          if(!confirm(renderModel.labels.creator.messages.removeImage))
+            return;
+
+          self.images.remove(image);
         }
     };
 
@@ -91,15 +97,24 @@ define([
         }
 
         self.removeHint = function (hint) {
-            self.hints.remove(hint);
+          if(!confirm(renderModel.labels.creator.messages.removeHint))
+            return;
+
+          self.hints.remove(hint);
         }
 
         self.removeImage = function (image) {
-            self.images.remove(image);
+          if(!confirm(renderModel.labels.creator.messages.removeImage))
+            return;
+
+          self.images.remove(image);
         }
 
         self.removeSector = function (sector) {
-            self.sectors.remove(sector);
+          if(!confirm(renderModel.labels.creator.messages.removeSector))
+            return;
+
+          self.sectors.remove(sector);
         }
     };
 
@@ -125,6 +140,9 @@ define([
       self.toAccountClick = function() { }
 
       self.backClick = function() {
+        if(!confirm(renderModel.labels.creator.messages.backQuestion))
+          return;
+
         window.location = "account";
       }
 
@@ -163,16 +181,22 @@ define([
         }
 
         self.removeLevel = function (level) {
-            self.levels.remove(level);
+          if(!confirm(renderModel.labels.creator.messages.removeLevel))
+            return;
+
+          self.levels.remove(level);
         }
 
         self.removeGame = function () {
-            self.levels.removeAll();
-            self.teams.removeAll();
-            self.name = ko.observable(null);
-            self.timeStart = ko.observable(null);
-            self.statistics = ko.observable(false);
-            self.active = ko.observable(false);
+          if(!confirm(renderModel.labels.creator.messages.removeGame))
+            return;
+
+          self.levels.removeAll();
+          self.teams.removeAll();
+          self.name = ko.observable(null);
+          self.timeStart = ko.observable(null);
+          self.statistics = ko.observable(false);
+          self.active = ko.observable(false);
         }
 
         self.createGame = function() {
