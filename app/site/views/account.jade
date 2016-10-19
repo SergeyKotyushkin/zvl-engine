@@ -134,14 +134,14 @@ block content
                   .btn.btn-primary(data-bind='click: commitClick')= renderModel.labels.account.invites.commit
                   .btn.btn-default(data-bind='click: cancelClick')= renderModel.labels.account.invites.cancel
 
-  .col-md-6(data-bind='if: teamPanelViewModel().isEmpty() && emptyTeamsPanelViewModel().emptyTeams().length')
+  .col-md-6(data-bind='if: emptyTeamsPanelViewModel().emptyTeams().length')
     .panel.panel-default.panel-content
       .panel-heading
         span= renderModel.labels.account.emptyTeams.header
       .panel-body
         div(data-bind='foreach: emptyTeamsPanelViewModel().emptyTeams')
           .empty-teams
-            strong(data-bind='text: name')
+            strong(data-bind='html: name')
             .btn.btn-default(title= renderModel.labels.account.emptyTeams.backPopup, data-bind='click: enterTeamClick')
               i.fa.fa-undo
   

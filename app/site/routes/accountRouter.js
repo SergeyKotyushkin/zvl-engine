@@ -76,23 +76,31 @@ function init(router) {
 
 				renderModel.invites = invitesResult.invites;
 
-				loadTeam(user._id, function(teamResult) {
-					if(teamResult.err) {
+				teamModel.find({userIds: {$size: 0}, captainId: user._id}, '_id name', function(err, emptyTeams) {
+					if(err || !emptyTeams){
 						return handleLogoutError(res);
 					}
 
-					var team = teamResult.team;
-					if(team) {
-						renderModel.team = {
-							isEmpty: false,
-							name: team.name,
-							captainId: team.captainId,
-							isCaptain: team.captainId.equals(user._id),
-							users: team.userIds
-						};
-					}
+					renderModel.emptyTeams = emptyTeams;
 
-					res.render('account', { renderModel: renderModel });
+					loadTeam(user._id, function(teamResult) {
+						if(teamResult.err) {
+							return handleLogoutError(res);
+						}
+
+						var team = teamResult.team;
+						if(team) {
+							renderModel.team = {
+								isEmpty: false,
+								name: team.name,
+								captainId: team.captainId,
+								isCaptain: team.captainId.equals(user._id),
+								users: team.userIds
+							};
+						}
+
+						res.render('account', { renderModel: renderModel });
+					});
 				});
 			});
 		});
@@ -362,7 +370,17 @@ function init(router) {
 					return handleJsonError(req, res, err);
 				}
 
-				return res.json({success: true, message: labels.pages.account.messages.userHasLeftTeam})
+				teamModel.find({userIds: {$size: 0}, captainId: req.user._id}, '_id name', function(err, emptyTeams) {
+					if(err || !emptyTeams){
+						return handleLogoutError(res);
+					}
+
+					return res.json({
+						success: true,
+						emptyTeams: emptyTeams,
+						message: labels.pages.account.messages.userHasLeftTeam
+					});
+				});
 			})
 		})
 	});

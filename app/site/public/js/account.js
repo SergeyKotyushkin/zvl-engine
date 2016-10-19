@@ -46,6 +46,16 @@ define([
       }
     }
 
+    function setEmptyTeams(viewModel, emptyTeams) {
+      viewModel.emptyTeamsPanelViewModel().emptyTeams.removeAll();
+      for(var i = 0; i < emptyTeams.length; i++) {
+        var emptyTeam = new EmptyTeamsPanelEmptyTeamViewModel();
+        emptyTeam.id(emptyTeams[i]._id);
+        emptyTeam.name(emptyTeams[i].name);
+        viewModel.emptyTeamsPanelViewModel().emptyTeams.push(emptyTeam);
+      }
+    }
+
 
     // post functions
     function post(url, data, success, fail, always) {
@@ -115,6 +125,7 @@ define([
           return;
         }
 
+        viewModel.teamPanelViewModel().newTeamName(null);
         setTeam(viewModel, data);
         setMessage(viewModel, data.message, true);
       })
@@ -221,6 +232,7 @@ define([
         viewModel.teamPanelViewModel().name(null);
         viewModel.teamPanelViewModel().captainId(null);
         viewModel.teamPanelViewModel().isCaptain(null);
+        setEmptyTeams(viewModel, data.emptyTeams);
         setMessage(viewModel, data.message, true);
       })
       .fail(function(err) {
@@ -374,7 +386,8 @@ define([
     function EmptyTeamsPanelEmptyTeamViewModel() {
       var self = this;
 
-      self.name = ko.observableArray(null);
+      self.id = ko.observable(null);
+      self.name = ko.observable(null);
 
       self.enterTeamClick = function() {
         alert('enter team');
@@ -491,6 +504,7 @@ define([
     viewModel.profilePanelViewModel().username(viewModel.username());
 
     setTeam(viewModel, renderModel.team);
+    setEmptyTeams(viewModel, renderModel.emptyTeams);
     setInvites(viewModel, renderModel.invites);
   });
 });
