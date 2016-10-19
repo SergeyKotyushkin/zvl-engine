@@ -15,28 +15,28 @@ block content
   .col-xs-12
     .h1(data-bind='text: header()')
     .form-group
-      .btn.btn-primary(data-bind='click: createGame')= 'createGame'
+      .btn.btn-primary(data-bind='click: createGame')= renderModel.labels.creator.createGame
   
   .col-xs-12
     .panel-group
       .panel.panel-default
         .panel-heading
           h4.panel-title
-            a(data-toggle='collapse', href='#game-collapse')= 'GameDetails'
-        #game-collapse.panel.collapse.collapse.in
+            a(data-toggle='collapse', href='#game-collapse')= renderModel.labels.creator.gameDetails
+        #game-collapse.panel-collapse.collapse.in
           .panel-body
             .form-group
-              span= "Name of the game"
+              span= renderModel.labels.creator.gameName
               input.form-control(data-bind='textInput: name')
             .form-group
-              span= "Start time"
-              input.form-control.time-input(data-bind='textInput: timeStart', placeholder='2016-05-19 16:54:10')
+              span= renderModel.labels.creator.startTime
+              input.form-control.time-input(data-bind='textInput: timeStart', placeholder= renderModel.labels.creator.timePlaceholder)
             .form-group
-              label.pointered= 'active'
+              label.pointered= renderModel.labels.creator.active
                 | &nbsp;
                 input(type='checkbox', data-bind='checked: active')                
             div
-              label.pointered= 'statistics'
+              label.pointered= renderModel.labels.creator.statistics
                 | &nbsp;
                 input(type='checkbox', data-bind='checked: statistics')
   
@@ -45,7 +45,7 @@ block content
       .panel-head
         span= 'Teams'
         .btn.btn-primary.btn-xs.btn-add(data-bind='click: addTeam')
-          i.fa.fa-plus
+          i.fa.fa-plus(title= renderModel.labels.creator.add)
       #team-accordion(data-bind="foreach: teams, attr: {class: teams().length === 0 ? '' : 'panel-group'}")
         .panel.panel-default
           .panel-heading
@@ -54,7 +54,7 @@ block content
                 data-parent="#team-accordion", 
                 data-bind="attr: {href: '#team-collapse'+$index()}, text: 'Team #'+($index()+1)")
             a.btn.btn-default.btn-remove.pull-right(data-bind='click: $parent.removeTeam')
-              i.fa.fa-minus
+              i.fa.fa-minus(title= renderModel.labels.creator.del)
           .panel-collapse.collapse(data-bind="attr: {id: 'team-collapse'+$index()}")
             .panel-body
               .form-group
@@ -67,120 +67,120 @@ block content
   .col-xs-12
     .panel.panel-default
       .panel-heading
-        span.panel-title= 'Levels'
+        span.panel-title= renderModel.labels.creator.levels
         .btn.btn-primary.btn-xs.btn-circle.pull-right(data-bind='click: addLevel')
-          i.fa.fa-plus
+          i.fa.fa-plus(title= renderModel.labels.creator.add)
       #level-accordion(data-bind="foreach: levels")
         .panel.panel-default.panel-content
           .panel-heading
             span.panel-title
               a(data-toggle="collapse", 
                 data-parent="#level-accordion", 
-                data-bind="attr: {href: '#level-collapse'+$index()}, text: 'Level #'+($index()+1)")
+                data-bind="attr: {href: '#level-collapse'+$index()}, text: renderModel.labels.creator.levelNum+($index()+1)")
             .btn.btn-warning.btn-xs.btn-circle.pull-right(data-bind='click: $parent.removeLevel')
-              i.fa.fa-minus
+              i.fa.fa-minus(title= renderModel.labels.creator.del)
           .panel-collapse.collapse(data-bind="attr: {'id': 'level-collapse'+$index()}")
             .panel-body
               .form-group
-                span= 'Name'
+                span= renderModel.labels.creator.name
                 input.form-control(data-bind='textInput: name')
               .form-group
-                span= 'Text'
+                span= renderModel.labels.creator.text
                 input.form-control(data-bind='textInput: text')
               .form-group
-                span= 'Time'
-                input.form-control.time-input(data-bind='textInput: time', placeholder='2016-05-19 16:54:10')
+                span= renderModel.labels.creator.time
+                input.form-control.time-input(data-bind='textInput: time', placeholder=renderModel.labels.creator.timePlaceholder)
               
               .form-group.panel.panel-default
                 .panel-heading
-                  span.panel-title= 'Pics to level'
+                  span.panel-title= renderModel.labels.creator.picsToLevel
                   .btn.btn-primary.btn-xs.btn-circle.pull-right(data-bind='click: addImage')
-                    i.fa.fa-plus
+                    i.fa.fa-plus(title= renderModel.labels.creator.add)
                 div(data-bind="foreach: images, attr: {'id': 'imageLevel-accordion' + $index()}")
                   .panel.panel-default.panel-content
                     .panel-heading
                       span.panel-title
                         a(data-toggle="collapse", 
-                          data-bind="attr: {href: ['#imageLevel-collapse',$parentContext.$index(),$index()].join(''), 'data-parent': '#imageLevel-accordion' + $parentContext.$index()}, text: 'Image #'+($index()+1)")
+                          data-bind="attr: {href: ['#imageLevel-collapse',$parentContext.$index(),$index()].join(''), 'data-parent': '#imageLevel-accordion' + $parentContext.$index()}, text: renderModel.labels.creator.picNum+($index()+1)")
                       .btn.btn-warning.btn-xs.btn-circle.pull-right(data-bind='click: $parent.removeImage')
-                        i.fa.fa-minus  
+                        i.fa.fa-minus(title= renderModel.labels.creator.del)  
                     .panel-collapse.collapse(data-bind="attr: {id: ['imageLevel-collapse',$parentContext.$index(),$index()].join('')}")
                       .panel-body
                           .form-group
-                            span= 'Url'
+                            span= renderModel.labels.creator.url
                             input.form-control(data-bind='textInput: url')
               
               .form-group.panel.panel-default
                 .panel-heading
-                  span.panel-title= 'Sectors'
+                  span.panel-title= renderModel.labels.creator.sectors
                   .btn.btn-primary.btn-xs.btn-circle.pull-right(data-bind='click: addSector')
-                    i.fa.fa-plus
+                    i.fa.fa-plus(title= renderModel.labels.creator.add)
                 div(data-bind="foreach: sectors, attr: {id: 'sector-accordion' + $index()}")
                   .panel.panel-default.panel-content
                     .panel-heading
                       span.panel-title
                         a(data-toggle='collapse', 
-                          data-bind="attr: {href: ['#sector-collapse',$parentContext.$index(),$index()].join(''), 'data-parent': '#sector-accordion' + $parentContext.$index()}, text: 'Sector #'+($index()+1)")
+                          data-bind="attr: {href: ['#sector-collapse',$parentContext.$index(),$index()].join(''), 'data-parent': '#sector-accordion' + $parentContext.$index()}, text: renderModel.labels.creator.sectorNum+($index()+1)")
                       .btn.btn-default.btn-xs.btn-circle.pull-right(data-bind='click: $parent.removeSector')
-                        i.fa.fa-minus
+                        i.fa.fa-minus(title= renderModel.labels.creator.del)
                     .panel-collapse.collapse(data-bind="attr: {id: ['sector-collapse',$parentContext.$index(),$index()].join('')}")
                       .panel.panel-default.panel-content
                         .panel-heading
-                          span.panel-title= 'Answers'
+                          span.panel-title= renderModel.labels.creator.answers
                           .btn.btn-primary.btn-xs.btn-circle.pull-right(data-bind='click: addAnswer')
-                            i.fa.fa-plus
+                            i.fa.fa-plus(title= renderModel.labels.creator.add)
                         div(data-bind="foreach: answers, attr: {id: ['answer-accordion',$parentContext.$index(),$index()].join('')}")
                           .panel.panel-default.panel-content
                             .panel-heading
                               span.panel-title
                                 a(data-toggle="collapse", 
-                                  data-bind="attr: {href: ['#answer-collapse',$parentContext.$parentContext.$index(),$parentContext.$index(),$index()].join(''), 'data-parent': ['#answer-accordion',$parentContext.$parentContext.$index(),$parentContext.$index()].join('')}, text: 'Answer #'+($index()+1)")
+                                  data-bind="attr: {href: ['#answer-collapse',$parentContext.$parentContext.$index(),$parentContext.$index(),$index()].join(''), 'data-parent': ['#answer-accordion',$parentContext.$parentContext.$index(),$parentContext.$index()].join('')}, text: renderModel.labels.creator.answerNum+($index()+1)")
                               .btn.btn-default.btn-xs.btn-circle.pull-right(data-bind='click: $parent.removeAnswer')
-                                i.fa.fa-minus
+                                i.fa.fa-minus(title= renderModel.labels.creator.del)
                             .panel-collapse.collapse(data-bind="attr: {id: ['answer-collapse',$parentContext.$parentContext.$index(),$parentContext.$index(),$index()].join('')}")
                               .panel-body
-                                span= 'Text'
+                                span= renderModel.labels.creator.text
                                 input.form-control(data-bind='textInput: text')
               
               .form-group.panel.panel-default
                 .panel-heading
-                  span.panel-title= 'Hints'
+                  span.panel-title= renderModel.labels.creator.hints
                   .btn.btn-primary.btn-xs.btn-circle.pull-right(data-bind='click: addHint')
-                    i.fa.fa-plus
+                    i.fa.fa-plus(title= renderModel.labels.creator.add)
                 div(data-bind="foreach: hints, attr: {id: 'hint-accordion' + $index()}")
                   .panel.panel-default.panel-content
                     .panel-heading
                       span.panel-title
                         a(data-toggle="collapse", 
-                          data-bind="attr: {href: ['#hint-collapse',$parentContext.$index(),$index()].join(''), 'data-parent': '#hint-accordion' + $parentContext.$index()}, text: 'hint #'+($index()+1)")
+                          data-bind="attr: {href: ['#hint-collapse',$parentContext.$index(),$index()].join(''), 'data-parent': '#hint-accordion' + $parentContext.$index()}, text: renderModel.labels.creator.hintNum+($index()+1)")
                       .btn.btn-default.btn-xs.btn-circle.pull-right(data-bind='click: $parent.removeHint')
-                        i.fa.fa-minus 
+                        i.fa.fa-minus(title= renderModel.labels.creator.del) 
                     .panel-collapse.collapse(data-bind="attr: {id: ['hint-collapse',$parentContext.$index(),$index()].join('')}")
                       .panel-body
                         .form-group
-                          span= 'Name'
+                          span= renderModel.labels.creator.name
                           input.form-control(data-bind='textInput: name')
                         .form-group
-                          span= 'Text'
+                          span= renderModel.labels.creator.text
                           input.form-control(data-bind='textInput: text')
-                        div
-                          span= 'Time'
-                          input.form-control.time-input(data-bind='textInput: time', placeholder='2016-05-19 16:54:10')
+                        .form-group
+                          span= renderModel.labels.creator.time
+                          input.form-control.time-input(data-bind='textInput: time', placeholder= renderModel.labels.creator.timePlaceholder)
                         
-                        .panel.panel-default.panel-content
+                        .form-group.panel.panel-default
                           .panel-heading
-                            span.panel-title= 'Pics to hint'
+                            span.panel-title= renderModel.labels.creator.picsToHint
                             .btn.btn-primary.btn-xs.btn-circle.pull-right(data-bind='click: addImage')
-                              i.fa.fa-plus
+                              i.fa.fa-plus(title= renderModel.labels.creator.add)
                           div(data-bind="foreach: images, attr: {id: ['imageHint-accordion',$parentContext.$index(),$index()].join('')}")
                             .panel.panel-default.panel-content
                               .panel-heading
                                 span.panel-title
                                   a(data-toggle="collapse", 
-                                    data-bind="attr: {href: ['#imageHint-collapse',$parentContext.$parentContext.$index(),$parentContext.$index(),$index()].join(''), 'data-parent': ['#imageHint-accordion',$parentContext.$parentContext.$index(),$parentContext.$index()].join('')}, text: 'Image #'+($index()+1)")
+                                    data-bind="attr: {href: ['#imageHint-collapse',$parentContext.$parentContext.$index(),$parentContext.$index(),$index()].join(''), 'data-parent': ['#imageHint-accordion',$parentContext.$parentContext.$index(),$parentContext.$index()].join('')}, text: renderModel.labels.creator.picNum+($index()+1)")
                                 .btn.btn-default.btn-xs.btn-circle.pull-right(data-bind='click: $parent.removeImage')
-                                  i.fa.fa-minus
+                                  i.fa.fa-minus(title= renderModel.labels.creator.del)
                               .panel-collapse.collapse(data-bind="attr: {id: ['imageHint-collapse',$parentContext.$parentContext.$index(),$parentContext.$index(),$index()].join('')}")
                                 .panel-body
-                                  span= 'Url'
+                                  span= renderModel.labels.creator.url
                                   input.form-control(data-bind='textInput: url')                          

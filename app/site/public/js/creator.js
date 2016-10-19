@@ -125,7 +125,7 @@ define([
       self.toAccountClick = function() { }
 
       self.backClick = function() {
-        window.location = "/";
+        window.location = "account";
       }
 
       self.title.subscribe(function(newTitle) {
@@ -186,8 +186,8 @@ define([
 
     viewModel.header(renderModel.header);
     viewModel.layoutAuthViewModel().title(renderModel.labels.creator.title);
-    //viewModel.layoutAuthViewModel().buttonBackLabel(renderModel.labels.creator.buttonBackLabel);
-    //viewModel.layoutAuthViewModel().buttonBackPopup(renderModel.labels.creator.buttonBackPopup);
+    viewModel.layoutAuthViewModel().buttonBackLabel(renderModel.labels.creator.buttonBackLabel);
+    viewModel.layoutAuthViewModel().buttonBackPopup(renderModel.labels.creator.buttonBackPopup);
     viewModel.layoutAuthViewModel().showBack(true);
   });
 });

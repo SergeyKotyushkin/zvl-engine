@@ -142,7 +142,34 @@
  			}
 		},
 		"creator": {
-			"title": "Создание игры"
+			"title": "Создание игры",
+			"buttonBackPopup": "Вернуться к профилю",
+			"buttonBackLabel": "Назад",
+			"header": "Новая игра",
+			"createGame": "Создать игру",
+			"gameDetails": "Детали игры",
+			"gameName": "Название игры",
+			"startTime": "Время начала",
+			"active": "Активность",
+			"statistics": "Статистика",
+			"timePlaceholder": "2016-05-19 16:54:10",
+			"levels": "Уровни",
+			"levelNum": "Уровень №",
+			"name": "Название",
+			"text": "Текст",
+			"time": "Время",
+			"picsToLevel": "Картинки уровня",
+			"picNum": "Картинка №",
+			"url": "Url картинки",
+			"sectors": "Сектора",
+			"sectorNum": "Сектор №",
+			"answers": "Ответы",
+			"answerNum": "Ответ №",
+			"hints": "Подсказки",
+			"hintNum": "Подсказка №",
+			"picsToHint": "Картинки подсказки",
+			"add": "Создать",
+			"del": "Удалить"
 		}
 	}
 }

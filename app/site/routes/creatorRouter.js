@@ -38,7 +38,7 @@ function init(router) {
 					creator: labels.pages.creator,
 					layoutAuth: labels.pages.layoutAuth
 				},
-				header: gameId ? gameId : 'New Game'
+				header: gameId ? gameId : labels.pages.creator.header
 			}
 		});
 	});
