@@ -56,6 +56,47 @@ define([
       }
     }
 
+    function setGames(viewModel, games) {
+      viewModel.gamesPanelViewModel().games.removeAll();
+      for(var i = 0; i < games.length; i++) {
+        var game = new GamesPanelGameViewModel(viewModel.gamesPanelViewModel());
+
+        game.id(games[i]._id);
+        game.name(games[i].name);
+        game.enableActive(games[i].active);
+        game.enableStatistics(games[i].statistics);
+
+        for(var j = 0; j< games[i].teams.length; j++) {
+          var gameTeam = new GamePanelGameTeamViewModel(game);
+
+          gameTeam.id(games[i].teams[j]._id);
+          gameTeam.name(games[i].teams[j].name);
+
+          game.teams.push(gameTeam);
+        }
+
+        viewModel.gamesPanelViewModel().games.push(game);
+      }
+    }
+
+    function setAllTeams(viewModel, allTeams, gameTeams) {
+
+      viewModel.allTeams.removeAll();
+      for(var i = 0; i < allTeams.length; i++) {
+        var gameTeam = new AllTeamsTeamViewModel(viewModel.gamesPanelViewModel());
+
+        gameTeam.id(allTeams[i]._id);
+        gameTeam.name(allTeams[i].name);
+
+        var isFounded = ko.utils.arrayFirst(gameTeams, function(item) {
+          return item.id == allTeams[i]._id;
+        });
+
+        gameTeam.isChecked(isFounded != null);
+
+        viewModel.allTeams.push(gameTeam);
+      }
+    }
 
     // post functions
     function post(url, data, success, fail, always) {
@@ -265,6 +306,24 @@ define([
       });
     }
 
+    function loadAllTeams(viewModel, gameId, gameTeams, callback) {
+      viewModel.layoutAuthViewModel().showLoadingImage(true);
+      $.post('/account/loadAllTeams', {gameId: gameId}, function(data) {
+        if(!data.success) {
+          setMessage(viewModel, data.message, false);
+          return;
+        }
+
+        setAllTeams(viewModel, data.allTeams, gameTeams);
+        callback();
+      })
+      .fail(function(err) {
+        setMessage(viewModel, renderModel.labels.messages.serverError, false);
+      })
+      .always(function() {
+        viewModel.layoutAuthViewModel().showLoadingImage(false);
+      });
+    }
 
     // knockout view models
     function LayoutAuthViewModel(parent) {
@@ -432,9 +491,11 @@ define([
       self.name = ko.observable(null);
     }
 
-    function GamesPanelGameViewModel() {
+    function GamesPanelGameViewModel(parent) {
       var self = this;
 
+      self.parent = ko.observable(parent);
+      self.id = ko.observable(null);
       self.name = ko.observable(null);
       self.enableActive = ko.observable(false);
       self.enableStatistics = ko.observable(false);
@@ -446,11 +507,13 @@ define([
       }
 
       self.editGameTeamsClick = function() {
-        alert('edit game teams');
+        loadAllTeams(self.parent().parent(), self.id(), self.teams(), function() {
+          $('#teams-modal').modal('show');
+        });
       }
 
       self.editGameClick = function() {
-        alert('edit game');
+        window.location = "creator?id=" + self.id();
       }
 
       self.removeGameClick = function() {
@@ -458,9 +521,10 @@ define([
       }
     }
 
-    function GamesPanelViewModel() {
+    function GamesPanelViewModel(parent) {
       var self = this;
 
+      self.parent = ko.observable(parent);
       self.games = ko.observableArray([]);
 
       self.createGameClick = function() {
@@ -494,7 +558,7 @@ define([
       self.teamPanelViewModel = ko.observable(new TeamPanelViewModel(self));
       self.invitePanelViewModel = ko.observable(new InvitePanelViewModel(self));
       self.emptyTeamsPanelViewModel = ko.observable(new EmptyTeamsPanelViewModel(self));
-      self.gamesPanelViewModel = ko.observable(new GamesPanelViewModel());
+      self.gamesPanelViewModel = ko.observable(new GamesPanelViewModel(self));
 
       self.allTeams = ko.observableArray([]);
 
@@ -530,5 +594,6 @@ define([
     setTeam(viewModel, renderModel.team);
     setEmptyTeams(viewModel, renderModel.emptyTeams);
     setInvites(viewModel, renderModel.invites);
+    setGames(viewModel, renderModel.games);
   });
 });

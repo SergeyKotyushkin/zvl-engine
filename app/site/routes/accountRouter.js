@@ -5,6 +5,7 @@ function init(router) {
 	var userModel = require(__common + "/models/user");
 	var teamModel = require(__common + "/models/team");
 	var inviteModel = require(__common + "/models/invite");
+	var gameModel = require(__common + "/models/game");
 
 
 	function handleLogoutError(res) {
@@ -37,6 +38,14 @@ function init(router) {
 			})
 	}
 
+	function loadGames(userId, callback) {
+		gameModel
+			.find({creatorId: userId})
+			.populate('teams', '_id name')
+			.exec(function(err, games) {
+				return callback({ games: err ? null : games, err: err	});
+			})
+	}
 
 	router.get('/:culture/account', function (req, res, next) {
 		if(!req.user.isAuthenticated) {
@@ -69,37 +78,45 @@ function init(router) {
 				}
 			};
 
-			loadInvites(user._id, function(invitesResult) {
-				if(invitesResult.err) {
+			loadGames(user._id, function(gamesResult) {
+				if(gamesResult.err || !gamesResult.games) {
 					return handleLogoutError(res);
 				}
 
-				renderModel.invites = invitesResult.invites;
+				renderModel.games = gamesResult.games;
 
-				teamModel.find({userIds: {$size: 0}, captainId: user._id}, '_id name', function(err, emptyTeams) {
-					if(err || !emptyTeams){
+				loadInvites(user._id, function(invitesResult) {
+					if(invitesResult.err) {
 						return handleLogoutError(res);
 					}
 
-					renderModel.emptyTeams = emptyTeams;
+					renderModel.invites = invitesResult.invites;
 
-					loadTeam(user._id, function(teamResult) {
-						if(teamResult.err) {
+					teamModel.find({userIds: {$size: 0}, captainId: user._id}, '_id name', function(err, emptyTeams) {
+						if(err || !emptyTeams){
 							return handleLogoutError(res);
 						}
 
-						var team = teamResult.team;
-						if(team) {
-							renderModel.team = {
-								isEmpty: false,
-								name: team.name,
-								captainId: team.captainId,
-								isCaptain: team.captainId.equals(user._id),
-								users: team.userIds
-							};
-						}
+						renderModel.emptyTeams = emptyTeams;
 
-						res.render('account', { renderModel: renderModel });
+						loadTeam(user._id, function(teamResult) {
+							if(teamResult.err) {
+								return handleLogoutError(res);
+							}
+
+							var team = teamResult.team;
+							if(team) {
+								renderModel.team = {
+									isEmpty: false,
+									name: team.name,
+									captainId: team.captainId,
+									isCaptain: team.captainId.equals(user._id),
+									users: team.userIds
+								};
+							}
+
+							res.render('account', { renderModel: renderModel });
+						});
 					});
 				});
 			});
@@ -439,6 +456,20 @@ function init(router) {
 				});
 
 			})
+		})
+	});
+
+	router.post('/account/loadAllTeams', function (req, res, next) {
+		if(!req.user.isAuthenticated) {
+			return handleLogoutError(res);
+		}
+
+		teamModel.find({userIds: {$not: {$size: 0}}}, "_id name", function(err, teams) {
+			if(err || !teams) {
+				return handleJsonError(req, res, err);
+			}
+
+			return res.json({success: true, allTeams: teams});
 		})
 	});
 }

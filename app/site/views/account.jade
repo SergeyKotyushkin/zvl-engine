@@ -150,7 +150,7 @@ block content
       .panel-heading
         span= renderModel.labels.account.games.header
       .panel-body
-        div(data-bind="class: gamesPanelViewModel().games().length ? 'form-group': ''")
+        div(data-bind="css: gamesPanelViewModel().games().length ? 'form-group': ''")
           .btn.btn-primary(data-bind='click: gamesPanelViewModel().createGameClick')= renderModel.labels.account.games.create
         div(data-bind='if: gamesPanelViewModel().games().length')
           table.table.table-bordered.table-striped
@@ -175,7 +175,7 @@ block content
                 td
                   div(data-bind='foreach: teams')
                     .game-team(data-bind='text: name')
-                  .btn.btn-default(data-toggle='modal', data-target='#teams-modal', data-bind='click: editGameTeamsClick')
+                  .btn.btn-default(data-bind='click: editGameTeamsClick')
                     i.fa.fa-lg.fa-exchange
                 td
                   .btn.btn-default(data-bind='click: editGameClick')
