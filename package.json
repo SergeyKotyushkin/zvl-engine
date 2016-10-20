@@ -29,6 +29,7 @@
     "rand-token": "^0.2.1",
     "serve-favicon": "~2.3.0",
     "telegram-node-bot": "^2.0.3",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "moment": "^2.15.1"
   }
 }

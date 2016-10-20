@@ -147,12 +147,14 @@
 			"buttonBackLabel": "Назад",
 			"header": "Новая игра",
 			"createGame": "Создать игру",
+			"editGame": "Обновить игру",
 			"gameDetails": "Детали игры",
 			"gameName": "Название игры",
 			"startTime": "Время начала",
 			"active": "Активность",
 			"statistics": "Статистика",
-			"timePlaceholder": "2016-05-19 16:54:10",
+			"dateTimePlaceholder": "2016-05-19 16:54:10",
+			"timePlaceholder": "23:59:59",
 			"levels": "Уровни",
 			"levelNum": "Уровень №",
 			"name": "Название",
@@ -177,7 +179,12 @@
 				"removeSector": "Удалить этот сектор?",
 				"removeLevel": "Удалить этот уровень?",
 				"removeGame": "Удалить игру?",
-				"backQuestion": "Хотите выйти без сохранения?"
+				"backQuestion": "Хотите выйти без сохранения?",
+				"onlyAdmin": "Вы не имеете прав администратора для выполнения данной операции",
+				"gameWasCreated": "Игра создана",
+				"gameWasUpdated": "Игра обновлена",
+				"fillDateFields": "Заполните поля с датами правильными значениями",
+				"fillTextFields": "Не все поля заполнены"
 			}
 		}
 	}

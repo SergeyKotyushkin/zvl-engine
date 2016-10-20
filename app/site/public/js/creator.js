@@ -6,16 +6,172 @@ define([
 
   $(document).ready(function() {
 
-    function setMessage(viewModel, message, isSuccess) {
-      if(isSuccess)
-        viewModel.successMessage(message);
-      else
-        viewModel.errorMessage(message);
+    function checkInputs(viewModel) {
+      $(":text").each(function() {
+        $(this).removeClass("empty-input");
+      });
 
-      viewModel.hasError(!isSuccess);
-      viewModel.hasSuccess(isSuccess);
+      var isEmpty = false;
+      $(".time-input").each(function() {
+        $(this).val($(this).val().trim());
+        var condition = false;
+        if($(this).hasClass("date-input")) {
+          condition = checkDateTime($(this).val());
+        } else {
+          condition = checkTime($(this).val());
+        }
+
+        if(!condition) {
+            $(this).addClass("empty-input");
+            isEmpty = true;
+        }
+      });
+
+      if (isEmpty) {
+        setMessage(viewModel, renderModel.labels.creator.messages.fillDateFields, false);
+        return false;
+      }
+
+      $(":text").each(function () {
+        $(this).val($(this).val().trim());
+        if (!$(this).val().length) {
+            $(this).addClass("empty-input");
+            $(this).focus();
+            isEmpty = true;
+        }
+      });
+
+      if (isEmpty) {
+        setMessage(viewModel, renderModel.labels.creator.messages.fillTextFields, false);
+        return false;
+      }
+
+      return true;
     }
 
+    function checkDateTime(value) {
+      return /^([\d]{4}-[\d]{2}-[\d]{2} [\d]{2}:[\d]{2}:[\d]{2})$/.test(value) &&
+        isNaN(Date.parse(value)) == false;
+    }
+
+    function checkTime(value) {
+      if(!/^([\d]{2}:[\d]{2}:[\d]{2})$/.test(value))
+        return false;
+
+      var nums = value.split(':');
+      return +nums[0] < 24 && +nums[1] < 60 && +nums[2] < 60
+        ? [+nums[0], +nums[1], +nums[2]]
+        : null;
+    }
+
+    function createTimeFromValues(values) {
+      return [
+        values[0] == 0 ? "00" : values[0],
+        values[1] == 0 ? "00" : values[1],
+        values[2] == 0 ? "00" : values[2]
+      ].join(':');
+    }
+
+    function setMessage(viewModel, message, isSuccess) {
+      if(isSuccess)
+        viewModel.layoutAuthViewModel().successMessage(message);
+      else
+        viewModel.layoutAuthViewModel().errorMessage(message);
+
+      viewModel.layoutAuthViewModel().hasError(!isSuccess);
+      viewModel.layoutAuthViewModel().hasSuccess(isSuccess);
+    }
+
+    function setGame(viewModel, game) {
+      viewModel.name(game.name);
+      viewModel.timeStart(game.timeStart);
+      viewModel.active(game.active);
+      viewModel.statistics(game.statistics);
+      viewModel.id(game._id);
+
+      for (var i = 0; i < game.levels.length; i++) {
+        var level = new LevelViewModel();
+
+        level.name(game.levels[i].name);
+        level.orderNumber(game.levels[i].orderNumber);
+        level.text(game.levels[i].text);
+        level.time(createTimeFromValues(game.levels[i].timeValues));
+
+        for (var j = 0; j < game.levels[i].hints.length; j++) {
+          var hint = new HintViewModel();
+
+          hint.name(game.levels[i].hints[j].name);
+          hint.orderNumber(game.levels[i].hints[j].orderNumber);
+          hint.text(game.levels[i].hints[j].text);
+          hint.time(createTimeFromValues(game.levels[i].hints[j].timeValues));
+
+          for (var z = 0; z < game.levels[i].hints[j].images.length; z++) {
+            var image = new ImageViewModel();
+
+            image.orderNumber(game.levels[i].hints[j].images[z].orderNumber);
+            image.url(game.levels[i].hints[j].images[z].url);
+
+            hint.images.push(image);
+          }
+
+          level.hints.push(hint);
+        }
+
+        for (var j = 0; j < game.levels[i].sectors.length; j++) {
+          var sector = new SectorViewModel();
+
+          sector.orderNumber(game.levels[i].sectors[j].orderNumber);
+
+          for (var z = 0; z < game.levels[i].sectors[j].answers.length; z++) {
+            var answer = new AnswerViewModel();
+
+            answer.text(game.levels[i].sectors[j].answers[z].text);
+
+            sector.answers.push(answer);
+          }
+
+          level.sectors.push(sector);
+        }
+
+        for (var j = 0; j < game.levels[i].images.length; j++) {
+          var image = new ImageViewModel();
+
+          image.orderNumber(game.levels[i].images[j].orderNumber);
+          image.url(game.levels[i].images[j].url);
+
+          level.images.push(image);
+        }
+
+        viewModel.levels.push(level);
+      }
+    }
+
+    // post methods
+    function createGame(viewModel) {
+      viewModel.layoutAuthViewModel().showLoadingImage(true);
+      $.ajax({
+        url: '/creator/create',
+        type: "POST",
+        data: ko.toJSON({game: viewModel}),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(data) {
+          if(!data.success) {
+            setMessage(viewModel, data.message, false);
+            return;
+          }
+
+          setMessage(viewModel, data.message, true);
+          window.location = data.location;
+        },
+        error: function() {
+          setMessage(viewModel, renderModel.labels.messages.serverError, false);
+        }
+      })
+      .always(function() {
+        viewModel.layoutAuthViewModel().showLoadingImage(false);
+      });
+    }
 
     // knockout view model
     function AnswerViewModel() {
@@ -57,6 +213,7 @@ define([
         self.orderNumber = ko.observable(null);
         self.text = ko.observable(null);
         self.time = ko.observable(null);
+        self.timeValues = [];
 
         self.images = ko.observableArray([]);
 
@@ -70,6 +227,14 @@ define([
 
           self.images.remove(image);
         }
+
+        self.time.subscribe(function(newValue) {
+          var result = checkTime(newValue);
+
+          self.timeValues = [];
+          if(result)
+            self.timeValues = result;
+        });
     };
 
     function LevelViewModel() {
@@ -79,6 +244,7 @@ define([
         self.orderNumber = ko.observable(null);
         self.text = ko.observable(null);
         self.time = ko.observable(null);
+        self.timeValues = [];
 
         self.hints = ko.observableArray([]);
         self.images = ko.observableArray([]);
@@ -116,6 +282,15 @@ define([
 
           self.sectors.remove(sector);
         }
+
+
+        self.time.subscribe(function(newValue) {
+          var result = checkTime(newValue);
+
+          self.timeValues = [];
+          if(result)
+            self.timeValues = result;
+        });
     };
 
     function TeamViewModel() {
@@ -125,10 +300,9 @@ define([
         self.code = ko.observable(null);
     };
 
-    function LayoutAuthViewModel(parent) {
+    function LayoutAuthViewModel() {
       var self = this;
 
-      self.parent = ko.observable(parent);
       self.title = ko.observable(null);
       self.buttonBackLabel = ko.observable(null);
       self.buttonBackPopup = ko.observable(null);
@@ -136,6 +310,10 @@ define([
       self.showLoadingImage = ko.observable(false);
       self.showBack = ko.observable(true);
       self.showToAccount = ko.observable(false);
+      self.errorMessage = ko.observable('');
+      self.successMessage = ko.observable('');
+      self.hasError = ko.observable(false);
+      self.hasSuccess = ko.observable(false);
 
       self.toAccountClick = function() { }
 
@@ -144,6 +322,16 @@ define([
           return;
 
         window.location = "account";
+      }
+
+      self.closeErrorClick = function() {
+        self.errorMessage('')
+        self.hasError(false);
+      }
+
+      self.closeSuccessClick = function() {
+        self.successMessage('')
+        self.hasSuccess(false);
       }
 
       self.title.subscribe(function(newTitle) {
@@ -162,6 +350,7 @@ define([
         self.active = ko.observable(false);
         self.name = ko.observable(null);
         self.timeStart = ko.observable(null);
+        self.timeStartNumber = ko.observable(null);
 
         self.levels = ko.observableArray([]);
         self.teams = ko.observableArray([]);
@@ -200,8 +389,16 @@ define([
         }
 
         self.createGame = function() {
-            addGame();
+          if(!checkInputs(viewModel))
+            return;
+
+          createGame(self)
         }
+
+
+        self.timeStart.subscribe(function(newValue) {
+          self.timeStartNumber(checkDateTime(newValue) ? Date.parse(newValue) : null)
+        });
     };
 
     var viewModel = new CreatorViewModel();
@@ -213,5 +410,9 @@ define([
     viewModel.layoutAuthViewModel().buttonBackLabel(renderModel.labels.creator.buttonBackLabel);
     viewModel.layoutAuthViewModel().buttonBackPopup(renderModel.labels.creator.buttonBackPopup);
     viewModel.layoutAuthViewModel().showBack(true);
+
+    var game = renderModel.game;
+    if(game)
+      setGame(viewModel, game);
   });
 });

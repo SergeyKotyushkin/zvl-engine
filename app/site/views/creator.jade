@@ -12,10 +12,21 @@ block headerscripts
     var renderModel = !{JSON.stringify(renderModel)}
 
 block content
+  .col-xs-12(data-bind='if: layoutAuthViewModel().hasError')
+    .alert.alert-danger.panel-content
+      .close(data-bind="click: layoutAuthViewModel().closeErrorClick") &times;
+      span(data-bind="html: layoutAuthViewModel().errorMessage")
+      .clearfix
+  .col-xs-12(data-bind='if: layoutAuthViewModel().hasSuccess')
+    .alert.alert-success.panel-content
+      .close(data-bind="click: layoutAuthViewModel().closeSuccessClick") &times;
+      span(data-bind="html: layoutAuthViewModel().successMessage")
+      .clearfix
+        
   .col-xs-12
     .h1(data-bind='text: header()')
     .form-group
-      .btn.btn-primary(data-bind='click: createGame')= renderModel.labels.creator.createGame
+      .btn.btn-primary(data-bind='click: createGame, html: id() ? renderModel.labels.creator.editGame : renderModel.labels.creator.createGame')
   
   .col-xs-12
     .panel-group
@@ -30,7 +41,7 @@ block content
               input.form-control(data-bind='textInput: name')
             .form-group
               span= renderModel.labels.creator.startTime
-              input.form-control.time-input(data-bind='textInput: timeStart', placeholder= renderModel.labels.creator.timePlaceholder)
+              input.form-control.date-input.time-input(data-bind='textInput: timeStart', placeholder= renderModel.labels.creator.dateTimePlaceholder)
             .form-group
               label.pointered= renderModel.labels.creator.active
                 | &nbsp;
