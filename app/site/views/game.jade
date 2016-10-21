@@ -1,0 +1,80 @@
+extends layoutAuth
+- bodyclass=''
+
+block headermeta
+
+block headerscripts
+  script(src="/vendor/js/require.js", data-main="/js/gameRequireJsConfig.js")
+  link(rel='stylesheet', href='/css/game.css')
+  
+  script(type='text/javascript').
+    var renderModel = !{JSON.stringify(renderModel)}
+
+block content
+  div
+    div(data-bind='if: showLevel')
+      #timer-level.text-right
+        .timer
+      .col-md-3
+        .panel.panel-default
+          .panel-heading
+            span.panel-title= 'Sectors'
+          .panel-body
+            .row(data-bind='foreach: sectors')
+              div(data-bind='if: isEmpty')
+                div.sector-label.empty
+                  span(data-bind="text: 'Sector ' + orderNumber + ':&nbsp;'")
+                div.sector-answer.empty
+                  span(data-bind="text: answer")
+              div(data-bind='ifnot: isEmpty')
+                div.sector-label
+                  span(data-bind="text: 'Sector ' + orderNumber + ':&nbsp;'")
+                div.sector-answer
+                  span(data-bind="text: answer")
+      .col-md-6
+        .panel.panel-default.form-group
+          .panel-heading.text-center
+            span.panel-title(data-bind='text: levelName')
+          .panel-body
+            .text-justify
+              span(data-bind='text: levelText')
+            .text-justify
+              div(data-bind='foreach: levelImages')
+                img.level-image(data-bind='attr: {src: imageUrl}', alt='levelImage')
+        div(data-bind="template: {name: 'hints-template', foreach: levelHints, afterAdd: timerHintAddFunction}")
+        
+        script#hints-template(type='text/html')
+          .panel.panel-default
+            .panel-heading
+              div(data-bind='if: isEmpty')
+                span.h5(data-bind="text: 'Hint #' + $index()")
+              div(data-bind='ifnot: isEmpty')
+                span(data-bind='text: name')
+            .panel-body.text-justify(data-bind='ifnot: isEmpty')
+              span(data-bind='text: text')
+              div(data-bind='foreach: images')
+                  img.level-image(data-bind='attr: {src: imageUrl}', alt='hintImage')
+              div(data-bind='if: isEmpty')
+                .timer.hint-timer(data-bind="attr: {'data-until: timeToHint'}")
+      
+      .col-md-3
+        .panel.panel-default
+          .panel-heading
+            span.panel-title= 'Enter answer'
+          .panel-body
+            .form-group
+              .btn.btn-primary.pull-right= 'OK'
+              input.form-control(data-bind='textInput: answerMessage')
+            .row(data-bind='foreach: messages')
+              div(data-bind="text: right + '| ' + answer")
+    div(data-bind='if: showTimerStartOfTheGame')
+      .h2= 'Timer to the game start'
+      #timer-start-of-the-game.timer
+    div(data-bind='if: showEndOfTheGame')
+      .h2= 'Game has ended'
+      .h2(data-bind="text: 'Your place: ' + endGamePlace()")
+              
+          
+             
+            
+        

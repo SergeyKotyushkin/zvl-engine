@@ -6,5 +6,6 @@ require('./authRouter').init(router);
 require('./centerRouter').init(router);
 require('./accountRouter').init(router);
 require('./creatorRouter').init(router);
+require('./gameRouter').init(router);
 
 module.exports = router;

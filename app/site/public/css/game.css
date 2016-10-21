@@ -1,0 +1,51 @@
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+.alert {
+    margin-top: 5px;
+    display: none;
+}
+
+.timer {
+    width: 240px;
+    height: 45px;
+}
+
+#timer-level {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+#timer-level > div {
+    display: inline-block;
+}
+
+#btn-answer {
+    width: 35px;
+}
+
+#i-answer {
+    width: calc(100% - 40px);
+}
+
+.sector-label {
+  font-weight: bold;
+  color: rgb(8, 92, 8);
+  float: left;
+  clear: both;
+}
+
+.sector-label.empty {
+  color: rgb(234, 7, 7);
+}
+
+.sector-answer {
+  font-weight: bold;
+  color: rgb(8, 92, 8);
+  float: left;
+}
+
+.sector-answer.empty {
+  color: rgb(234, 7, 7);
+}

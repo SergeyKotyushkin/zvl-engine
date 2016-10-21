@@ -189,6 +189,11 @@
 				"fillDateFields": "Заполните поля с датами правильными значениями",
 				"fillTextFields": "Не все поля заполнены"
 			}
+		},
+		"game": {
+			"title": "Игра",
+			"buttonBackPopup": "Вернуться к профилю",
+			"buttonBackLabel": "Назад"
 		}
 	}
 }

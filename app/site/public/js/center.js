@@ -57,7 +57,7 @@ define([
       self.status = ko.observable(0);
 
       self.toGameClick = function(gameAdvertisment) {
-        alert('to ' + gameAdvertisment.name());
+        window.location = 'game?id=' + self.id();
       }
     }
 
