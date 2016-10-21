@@ -66,9 +66,9 @@ define([
 
     function createTimeFromValues(values) {
       return [
-        values[0] == 0 ? "00" : values[0],
-        values[1] == 0 ? "00" : values[1],
-        values[2] == 0 ? "00" : values[2]
+        (values[0] < 10 ? "0" : "") + values[0],
+        (values[1] < 10 ? "0" : "") + values[1],
+        (values[2] < 10 ? "0" : "") + values[2]
       ].join(':');
     }
 
