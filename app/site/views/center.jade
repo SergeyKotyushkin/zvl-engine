@@ -38,19 +38,21 @@ block content
         span.sr-only= 'Next'
     
     #near-games
-      div(data-bind='foreach: gameAdvertismentViewModels')
-        .game(data-bind="attr: {'data-v': status() }")
-          div(data-bind='if: status() === 1')
-            h2(data-bind='html: name()')
-            h5(data-bind='html: date()')
-            div.btn.btn-primary(data-bind="click: toGameClick, html: renderModel.labels.center.buttonToGameLabel")
-      
-          div(data-bind='if: status() === 2')
-            h2(data-bind='html: name()')
-            h5(data-bind='html: date()')
-            h3= 'status 2'
-          
-          div(data-bind='if: status() === 0')
-            h3= 'status 3'
-          
-        hr
+      div(data-bind='if: gameAdvertismentViewModels().length')
+        div(data-bind='foreach: gameAdvertismentViewModels')
+          .game(data-bind="attr: {'data-v': status() }")
+            div(data-bind='if: status() === 1')
+              h2(data-bind='html: name()')
+              h5(data-bind='html: date()')
+              div.btn.btn-primary(data-bind="click: toGameClick, html: renderModel.labels.center.buttonToGameLabel")
+        
+            div(data-bind='if: status() === 2')
+              h2(data-bind='html: name()')
+              h5(data-bind='html: date()')
+              h3= renderModel.labels.center.notRegisterForGame
+              
+            hr
+      div(data-bind='if: !gameAdvertismentViewModels().length')
+        .game
+          .div
+            h3= renderModel.labels.center.noGames
