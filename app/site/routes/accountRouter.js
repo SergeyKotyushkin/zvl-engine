@@ -472,6 +472,21 @@ function init(router) {
 			return res.json({success: true, allTeams: teams});
 		})
 	});
+
+	router.post('/account/commitGameTeams', function (req, res, next) {
+		if(!req.user.isAuthenticated) {
+			return handleLogoutError(res);
+		}
+
+		gameModel.update({_id: req.body.gameId}, {teams: req.body.teams}, {}, function(err, gameUpdatedResult) {
+			if(err || !gameUpdatedResult) {
+				return handleJsonError(req, res, err);
+			}
+
+			var labels = settings.default(req).labels;
+			return res.json({success: true, message: labels.pages.account.messages.resetTeamsForGame});
+		});
+	});
 }
 
 module.exports = { init: init };

@@ -138,7 +138,8 @@
 				"enterTeamUserHasTeam": "Сначала покиньте текущую команду",
 				"enterTeamNotEmpty": "Команда в которую вы хотите вернуться не пустая",
 				"enterTeamNotForThisUser": "Вы не можете вернуться в эту команду",
-				"userHasEnteredEmptyTeam": "Вы вернулись в команду"
+				"userHasEnteredEmptyTeam": "Вы вернулись в команду",
+				"resetTeamsForGame": " Изменены команды для игры"
  			}
 		},
 		"creator": {

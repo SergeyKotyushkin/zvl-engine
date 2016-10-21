@@ -35,7 +35,8 @@ var schema = new Schema({
 			}]
 		}]
 	}],
-	teams: [{ type: Schema.Types.ObjectId , ref : 'Team' }]
+	teams: [{ type: Schema.Types.ObjectId , ref : 'Team' }],
+	deleted: { type: Boolean, default: false }
 });
 
 var model;

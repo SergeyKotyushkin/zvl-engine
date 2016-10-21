@@ -89,7 +89,7 @@ define([
         gameTeam.name(allTeams[i].name);
 
         var isFounded = ko.utils.arrayFirst(gameTeams, function(item) {
-          return item.id == allTeams[i]._id;
+          return item.id() == allTeams[i]._id;
         });
 
         gameTeam.isChecked(isFounded != null);
@@ -325,6 +325,50 @@ define([
       });
     }
 
+    function commitGameTeams(viewModel, checkedTeams) {
+      viewModel.layoutAuthViewModel().showLoadingImage(true);
+      var checkedTeamIds = $.map(checkedTeams, function(val) { return val.id(); });
+
+      $.ajax({
+        url: '/account/commitGameTeams',
+        type: "POST",
+        data: JSON.stringify({gameId: viewModel.teamsModalGameId(), teams: checkedTeamIds}),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(data) {
+          if(!data.success) {
+            setMessage(viewModel, data.message, false);
+            return;
+          }
+
+          var game = ko.utils.arrayFirst(viewModel.gamesPanelViewModel().games(), function(item) {
+            return item.id() === viewModel.teamsModalGameId();
+          });
+
+          if(!game)
+            return;
+
+          game.teams.removeAll();
+          for(var i = 0; i < checkedTeams.length; i++){
+            var team = new GamePanelGameTeamViewModel();
+            team.id(checkedTeams[i].id());
+            team.name(checkedTeams[i].name());
+            game.teams.push(team);
+          }
+
+          setMessage(viewModel, data.message, true);
+          $('#teams-modal').modal('hide');
+        },
+        error: function() {
+          setMessage(viewModel, renderModel.labels.messages.serverError, false);
+        }
+      })
+      .always(function() {
+        viewModel.layoutAuthViewModel().showLoadingImage(false);
+      });
+    }
+
+
     // knockout view models
     function LayoutAuthViewModel(parent) {
       var self = this;
@@ -502,11 +546,8 @@ define([
 
       self.teams = ko.observableArray([]);
 
-      self.enterTeamClick = function() {
-        alert('enter team');
-      }
-
       self.editGameTeamsClick = function() {
+        self.parent().parent().teamsModalGameId(self.id());
         loadAllTeams(self.parent().parent(), self.id(), self.teams(), function() {
           $('#teams-modal').modal('show');
         });
@@ -548,6 +589,7 @@ define([
       self.username = ko.observable(null);
       self.email = ko.observable(null);
       self.isAdmin = ko.observable(0);
+      self.teamsModalGameId = ko.observable(null);
       self.errorMessage = ko.observable('');
       self.successMessage = ko.observable('');
       self.hasError = ko.observable(false);
@@ -563,7 +605,8 @@ define([
       self.allTeams = ko.observableArray([]);
 
       self.commitGameTeamsClick = function() {
-        alert('commit game teams');
+        var checkedTeams = self.allTeams().filter(function(item) { return item.isChecked(); });
+        commitGameTeams(self, checkedTeams);
       }
 
       self.closeErrorClick = function() {
