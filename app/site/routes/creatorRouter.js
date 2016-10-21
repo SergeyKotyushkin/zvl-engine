@@ -12,7 +12,7 @@ function init(router) {
 
 	function handleJsonError(req, res, err) {
 		res.json({
-			message: settings.parseError(req, err, 'account'),
+			message: settings.parseError(req, err, 'creator'),
 			success: false
 		});
 	}

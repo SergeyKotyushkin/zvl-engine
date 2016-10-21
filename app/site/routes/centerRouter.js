@@ -18,6 +18,13 @@ function init(router) {
 		});
 	}
 
+	function handleJsonError(req, res, err) {
+		res.json({
+			message: settings.parseError(req, err, 'center'),
+			success: false
+		});
+	}
+
 	function getNearGames(userId, callback) {
 		gameModel
 			.find({active: true}, '_id name timeStartNumber teams', {sort: {timeStartNumber: -1}})
@@ -48,18 +55,16 @@ function init(router) {
 			});
 	}
 
+
 	router.get('/:culture/center', function (req, res, next) {
 		if(!req.user.isAuthenticated) {
-			res.redirect(['/', req.params.culture].join(''));
-			return;
+			return handleLogoutError(res);
 		}
 
 		// load user data
 		userModel.findOne({ _id: req.user._id }, function(err, user) {
 			if(err || !user) {
-				authenticator.logout(res);
-				res.redirect(['/', req.params.culture].join(''));
-				return;
+				return handleJsonError(req, res, err);
 			}
 
 			// load near game
